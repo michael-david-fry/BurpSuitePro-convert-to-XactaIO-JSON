@@ -15,9 +15,12 @@ import os
 import sys
 import json
 import time
+import hashlib
 import logging
 import configparser
 import xml.etree.ElementTree as ET
+from datetime import datetime
+from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse
 from typing import List, Dict, Optional
 
@@ -133,6 +136,133 @@ def build_test_data(host: Optional[str], path: Optional[str]) -> Optional[str]:
         return f"path={path}"
     return None
 
+def parse_export_time_to_epoch_ms(export_time: Optional[str]) -> Optional[int]:
+    if not export_time:
+        return None
+    text = export_time.strip()
+    try:
+        dt = parsedate_to_datetime(text)
+        return int(dt.timestamp() * 1000)
+    except Exception:
+        pass
+    for fmt in ("%a %b %d %H:%M:%S %Z %Y", "%a %b %d %H:%M:%S %Y"):
+        try:
+            dt = datetime.strptime(text, fmt)
+            return int(dt.timestamp() * 1000)
+        except ValueError:
+            continue
+    return None
+
+def extract_request_response(issue: ET.Element) -> Dict[str, Optional[str]]:
+    request = None
+    response = None
+    http_method = None
+    response_redirected = None
+    requestresponse = issue.find("requestresponse")
+    if requestresponse is not None:
+        request_elem = requestresponse.find("request")
+        response_elem = requestresponse.find("response")
+        redirected_elem = requestresponse.find("responseRedirected")
+        if request_elem is not None:
+            request = (request_elem.text or "").strip() or None
+            http_method = request_elem.attrib.get("method")
+        if response_elem is not None:
+            response = (response_elem.text or "").strip() or None
+        if redirected_elem is not None:
+            response_redirected = (redirected_elem.text or "").strip() or None
+    return {
+        "request": request,
+        "response": response,
+        "http_method": http_method,
+        "response_redirected": response_redirected
+    }
+
+def extract_asset_ip_from_host(host: Optional[str]) -> Optional[str]:
+    if not host:
+        return None
+    candidate = host.strip()
+    if "://" not in candidate:
+        candidate = f"//{candidate}"
+    parsed = urlparse(candidate)
+    host_name = parsed.hostname
+    if not host_name:
+        return None
+    octets = host_name.split(".")
+    if len(octets) == 4 and all(part.isdigit() and 0 <= int(part) <= 255 for part in octets):
+        return host_name
+    return None
+
+def build_audit_source_record(
+    issue: ET.Element,
+    scanner_source: str,
+    scanner_version: Optional[str],
+    scan_date_value: Optional[str]
+) -> Dict[str, str]:
+    host = text_or_none(issue.find("host"))
+    path = text_or_none(issue.find("path"))
+    severity = text_or_none(issue.find("severity"))
+    confidence = text_or_none(issue.find("confidence"))
+    issue_background = text_or_none(issue.find("issueBackground"))
+    issue_detail = text_or_none(issue.find("issueDetail"))
+    remediation_background = text_or_none(issue.find("remediationBackground"))
+    remediation_detail = text_or_none(issue.find("remediationDetail"))
+    references = text_or_none(issue.find("references"))
+    vulnerability_classifications = text_or_none(issue.find("vulnerabilityClassifications"))
+    location = text_or_none(issue.find("location"))
+    source_type = text_or_none(issue.find("type"))
+    serial_number = text_or_none(issue.find("serialNumber"))
+    static_analysis = text_or_none(issue.find("staticAnalysis"))
+    request_response_data = extract_request_response(issue)
+
+    weakness_parts = []
+    cwe_id = text_or_none(issue.find("cweid"))
+    if vulnerability_classifications:
+        weakness_parts.append(vulnerability_classifications)
+    if cwe_id:
+        weakness_parts.append(f"CWE-{cwe_id}")
+
+    return {
+        "External ID": serial_number or source_type or "",
+        "Title": text_or_none(issue.find("name")) or "",
+        "Source Type": source_type or "",
+        "Severity": severity or "",
+        "Scanner Severity (Original)": severity or "",
+        "Scanner Confidence": confidence or "",
+        "Asset Hostname": host or "",
+        "Asset IP Address": extract_asset_ip_from_host(host) or "",
+        "Affected Resource": path or "",
+        "Finding Location": location or "",
+        "Description": issue_background or "",
+        "Technical Details": issue_detail or "",
+        "Remediation Rationale": remediation_background or "",
+        "Recommended Remediation": remediation_detail or "",
+        "References": references or "",
+        "Weakness Classification": " | ".join(weakness_parts),
+        "Evidence Request": request_response_data["request"] or "",
+        "Evidence Response": request_response_data["response"] or "",
+        "HTTP Method": request_response_data["http_method"] or "",
+        "Scan Date": scan_date_value or "",
+        "Scanner Source": scanner_source or "",
+        "Evidence Hash": "",
+        "Scanner Version": scanner_version or "",
+        "Scan Type": static_analysis or ""
+    }
+
+def append_audit_block(notes_text: str, audit_record: Dict[str, str]) -> str:
+    serialized = json.dumps(audit_record, separators=(",", ":"), ensure_ascii=False)
+    block = (
+        "[AUDIT_SOURCE_BURP_V1_BEGIN]\n"
+        f"{serialized}\n"
+        "[AUDIT_SOURCE_BURP_V1_END]"
+    )
+    if notes_text:
+        return f"{notes_text}\n\n{block}"
+    return block
+
+def evidence_hash_from_record(audit_record: Dict[str, str]) -> str:
+    serialized = json.dumps(audit_record, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
 # -----------------------------
 # Burp XML validation
 # -----------------------------
@@ -158,7 +288,13 @@ def validate_burp_xml_structure(root: ET.Element) -> None:
 # Parse Burp issues
 # -----------------------------
 
-def parse_burp_issues(root: ET.Element) -> List[Dict]:
+def parse_burp_issues(
+    root: ET.Element,
+    scanner_source: str,
+    scanner_version: Optional[str],
+    scan_date_epoch_ms: int,
+    scan_date_value: Optional[str]
+) -> List[Dict]:
     results = []
 
     for issue in root.findall(".//issue"):
@@ -167,6 +303,11 @@ def parse_burp_issues(root: ET.Element) -> List[Dict]:
         confidence = text_or_none(issue.find("confidence"))
         background = text_or_none(issue.find("issueBackground")) or name
         detail = text_or_none(issue.find("issueDetail"))
+        location = text_or_none(issue.find("location"))
+        remediation_background = text_or_none(issue.find("remediationBackground"))
+        remediation_detail = text_or_none(issue.find("remediationDetail"))
+        references = text_or_none(issue.find("references"))
+        vulnerability_classifications = text_or_none(issue.find("vulnerabilityClassifications"))
         host = text_or_none(issue.find("host"))
         path = text_or_none(issue.find("path"))
         cwe_id = text_or_none(issue.find("cweid"))
@@ -174,33 +315,80 @@ def parse_burp_issues(root: ET.Element) -> List[Dict]:
         port = parse_port_from_host_or_path(host, path)
         protocol = parse_protocol_from_host(host)
         test_data = build_test_data(host, path)
+        request_response_data = extract_request_response(issue)
+        asset_ip = extract_asset_ip_from_host(host)
 
         notes = []
         if host:
             notes.append(f"Host: {host}")
+        if asset_ip:
+            notes.append(f"Asset IP Address: {asset_ip}")
         if path:
             notes.append(f"Path: {path}")
+        if location:
+            notes.append(f"Finding Location: {location}")
         if confidence:
             notes.append(f"Confidence: {confidence}")
+        if references:
+            notes.append(f"References: {references}")
+        if remediation_background:
+            notes.append(f"Remediation Rationale: {remediation_background}")
+        if remediation_detail:
+            notes.append(f"Recommended Remediation: {remediation_detail}")
+        if request_response_data["response_redirected"]:
+            notes.append(f"Response Redirected: {request_response_data['response_redirected']}")
         if detail:
             notes.append(detail)
 
         result_data = []
+        source_type = text_or_none(issue.find("type"))
+        serial_number = text_or_none(issue.find("serialNumber"))
+        result_data.append(f"Source Type: {source_type or ''}")
+        result_data.append(f"External ID: {serial_number or source_type or ''}")
         if severity:
             result_data.append(f"Severity: {severity}")
         if confidence:
             result_data.append(f"Confidence: {confidence}")
+        if request_response_data["http_method"]:
+            result_data.append(f"HTTP Method: {request_response_data['http_method']}")
+        if scan_date_value:
+            result_data.append(f"Scan Date: {scan_date_value}")
+        result_data.append(f"Scanner Source: {scanner_source}")
+        if scanner_version:
+            result_data.append(f"Scanner Version: {scanner_version}")
+
+        if request_response_data["http_method"]:
+            method = request_response_data["http_method"]
+            if test_data:
+                test_data = f"{method} {test_data}"
+            else:
+                test_data = f"method={method}"
+
+        description_parts = [p for p in (background, detail) if p]
+        if remediation_background:
+            description_parts.append(f"Remediation Rationale: {remediation_background}")
+        if remediation_detail:
+            description_parts.append(f"Recommended Remediation: {remediation_detail}")
+        description = "\n\n".join(description_parts) if description_parts else None
+
+        audit_record = build_audit_source_record(
+            issue=issue,
+            scanner_source=scanner_source,
+            scanner_version=scanner_version,
+            scan_date_value=scan_date_value
+        )
+        audit_record["Evidence Hash"] = evidence_hash_from_record(audit_record)
 
         entry = {
             "vendorId": vendor_id,
             "testName": name,
-            "description": background,
-            "notes": "\n".join(notes),
+            "description": description or background,
+            "notes": append_audit_block("\n".join(notes), audit_record),
             "result": scanner_result_from_severity(severity),
-            "rawResult": "Fail",
+            "rawResult": scanner_result_from_severity(severity),
             "riskFactor": map_severity(severity),
             "scanRiskFactor": map_severity(severity),
-            "runTime": int(time.time() * 1000),
+            "runTime": scan_date_epoch_ms,
             "scannedWithCredentialsFlag": False,
             "errorRunningTestFlag": False
         }
@@ -217,6 +405,10 @@ def parse_burp_issues(root: ET.Element) -> List[Dict]:
             entry["contents"] = [
                 {"name": f"CWE-{cwe_id}", "type": "CWE"}
             ]
+        if vulnerability_classifications:
+            entry.setdefault("contents", []).append(
+                {"name": vulnerability_classifications, "type": "CWE"}
+            )
 
         # vendorId and testName are core identifiers for test results
         if entry["vendorId"] and entry["testName"]:
@@ -286,17 +478,27 @@ def main() -> None:
             logging.error("Skipping %s: %s", filename, e)
             continue
 
-        test_results = parse_burp_issues(root)
+        scan_date_value = root.attrib.get("exportTime")
+        scan_date_epoch_ms = parse_export_time_to_epoch_ms(scan_date_value) or int(time.time() * 1000)
+        effective_scanner_version = scanner_version or root.attrib.get("burpVersion")
+
+        test_results = parse_burp_issues(
+            root=root,
+            scanner_source=DATA_SOURCE_NAME,
+            scanner_version=effective_scanner_version,
+            scan_date_epoch_ms=scan_date_epoch_ms,
+            scan_date_value=scan_date_value
+        )
 
         asset = [{
             "hostName": app_name,
             "dataSource": DATA_SOURCE_NAME,
-            "scanDate": int(time.time() * 1000),
+            "scanDate": scan_date_epoch_ms,
             "testResults": test_results
         }]
 
-        if scanner_version:
-            asset[0]["scannerVersion"] = scanner_version
+        if effective_scanner_version:
+            asset[0]["scannerVersion"] = effective_scanner_version
         if system_name:
             asset[0]["systemName"] = system_name
 
