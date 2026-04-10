@@ -18,6 +18,7 @@ import time
 import logging
 import configparser
 import xml.etree.ElementTree as ET
+from urllib.parse import urlparse
 from typing import List, Dict, Optional
 
 # Optional dependency
@@ -77,6 +78,61 @@ def text_or_none(elem: Optional[ET.Element]) -> Optional[str]:
 def map_severity(severity: Optional[str]) -> str:
     return SEVERITY_MAP.get(severity, "Low")
 
+def scanner_result_from_severity(severity: Optional[str]) -> str:
+    if severity and severity.strip().lower() in ("pass", "n/a"):
+        return severity.strip().title()
+    return "Fail"
+
+def parse_port_from_host_or_path(host: Optional[str], path: Optional[str]) -> Optional[int]:
+    for value in (host, path):
+        if not value:
+            continue
+        candidate = value.strip()
+        if "://" not in candidate:
+            candidate = f"//{candidate}"
+        parsed = urlparse(candidate)
+        try:
+            if parsed.port is not None:
+                return parsed.port
+        except ValueError:
+            continue
+    return None
+
+def parse_protocol_from_host(host: Optional[str]) -> Optional[str]:
+    if not host:
+        return None
+    parsed = urlparse(host.strip())
+    if parsed.scheme:
+        return parsed.scheme.upper()
+    return None
+
+def infer_vendor_id(issue: ET.Element, name: Optional[str], host: Optional[str], path: Optional[str]) -> Optional[str]:
+    issue_type = text_or_none(issue.find("type"))
+    if issue_type:
+        return issue_type
+
+    serial_number = text_or_none(issue.find("serialNumber"))
+    if serial_number:
+        return serial_number
+
+    if name:
+        return f"{name}|{host or ''}|{path or ''}"
+
+    return None
+
+def build_test_data(host: Optional[str], path: Optional[str]) -> Optional[str]:
+    if host and path:
+        if host.endswith("/") and path.startswith("/"):
+            return f"{host[:-1]}{path}"
+        if (not host.endswith("/")) and (not path.startswith("/")):
+            return f"{host}/{path}"
+        return f"{host}{path}"
+    if host:
+        return f"host={host}"
+    if path:
+        return f"path={path}"
+    return None
+
 # -----------------------------
 # Burp XML validation
 # -----------------------------
@@ -114,6 +170,10 @@ def parse_burp_issues(root: ET.Element) -> List[Dict]:
         host = text_or_none(issue.find("host"))
         path = text_or_none(issue.find("path"))
         cwe_id = text_or_none(issue.find("cweid"))
+        vendor_id = infer_vendor_id(issue, name, host, path)
+        port = parse_port_from_host_or_path(host, path)
+        protocol = parse_protocol_from_host(host)
+        test_data = build_test_data(host, path)
 
         notes = []
         if host:
@@ -125,21 +185,44 @@ def parse_burp_issues(root: ET.Element) -> List[Dict]:
         if detail:
             notes.append(detail)
 
+        result_data = []
+        if severity:
+            result_data.append(f"Severity: {severity}")
+        if confidence:
+            result_data.append(f"Confidence: {confidence}")
+
         entry = {
+            "vendorId": vendor_id,
             "testName": name,
             "description": background,
             "notes": "\n".join(notes),
+            "result": scanner_result_from_severity(severity),
             "rawResult": "Fail",
             "riskFactor": map_severity(severity),
-            "scanRiskFactor": map_severity(severity)
+            "scanRiskFactor": map_severity(severity),
+            "runTime": int(time.time() * 1000),
+            "scannedWithCredentialsFlag": False,
+            "errorRunningTestFlag": False
         }
 
+        if result_data:
+            entry["resultData"] = "; ".join(result_data)
+        if test_data:
+            entry["testData"] = test_data
+        if protocol:
+            entry["protocol"] = protocol
+        if port is not None:
+            entry["port"] = port
         if cwe_id:
             entry["contents"] = [
                 {"name": f"CWE-{cwe_id}", "type": "CWE"}
             ]
 
-        results.append(entry)
+        # vendorId and testName are core identifiers for test results
+        if entry["vendorId"] and entry["testName"]:
+            results.append(entry)
+        else:
+            logging.warning("Skipping issue with missing vendorId or testName")
 
     return results
 
@@ -170,6 +253,8 @@ def main() -> None:
     input_dir = config["BURP-IOJSON"].get("INPUT_FOLDER")
     output_dir = config["BURP-IOJSON"].get("OUTPUT_FOLDER")
     app_name = config["BURP-IOJSON"].get("APPLICATION_NAME")
+    scanner_version = config["BURP-IOJSON"].get("SCANNER_VERSION")
+    system_name = config["BURP-IOJSON"].get("SYSTEM_NAME")
 
     if not input_dir or not output_dir or not app_name:
         logging.error("config.ini missing required values")
@@ -209,6 +294,11 @@ def main() -> None:
             "scanDate": int(time.time() * 1000),
             "testResults": test_results
         }]
+
+        if scanner_version:
+            asset[0]["scannerVersion"] = scanner_version
+        if system_name:
+            asset[0]["systemName"] = system_name
 
         try:
             validate_xacta_json(asset)
