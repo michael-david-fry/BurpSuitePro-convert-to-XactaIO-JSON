@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 # Optional dependency
 try:
@@ -62,11 +62,38 @@ REQUIRED_ISSUE_FIELDS = ["name", "severity"]
 # -----------------------------
 
 XACTA_JSON_SCHEMA = {
-    "type": "array",
-    "items": {
-        "type": "object",
-        "required": ["hostName", "dataSource", "scanDate", "testResults"]
+    "type": "object",
+    "required": ["assets"],
+    "properties": {
+        "assets": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["hostName", "scanDate"]
+            }
+        }
     }
+}
+
+ALLOWED_ASSET_FIELDS = {
+    "hostName",
+    "scanDate",
+    "dataSource",
+    "systemName",
+    "scannerVersion",
+    "netAdapters",
+    "softwares",
+    "testResults"
+}
+
+ALLOWED_TEST_RESULT_FIELDS = {
+    "testName",
+    "description",
+    "notes",
+    "result",
+    "rawResult",
+    "protocol",
+    "vendorId"
 }
 
 # -----------------------------
@@ -152,6 +179,133 @@ def parse_export_time_to_epoch_ms(export_time: Optional[str]) -> Optional[int]:
         except ValueError:
             continue
     return None
+
+def parse_export_time_to_iso8601(export_time: Optional[str]) -> Optional[str]:
+    if not export_time:
+        return None
+    text = export_time.strip()
+    try:
+        dt = parsedate_to_datetime(text)
+        return dt.isoformat()
+    except Exception:
+        return None
+
+def normalize_hostname(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    candidate = value.strip()
+    if not candidate:
+        return None
+    parsed = urlparse(candidate if "://" in candidate else f"//{candidate}")
+    hostname = parsed.hostname
+    if not hostname:
+        return None
+    return hostname.lower().strip(".")
+
+def remove_empty_structures(value: Any) -> Any:
+    if isinstance(value, dict):
+        cleaned = {}
+        for key, item in value.items():
+            reduced = remove_empty_structures(item)
+            if reduced is None:
+                continue
+            if isinstance(reduced, (dict, list)) and not reduced:
+                continue
+            cleaned[key] = reduced
+        return cleaned or None
+    if isinstance(value, list):
+        cleaned_items = []
+        for item in value:
+            reduced = remove_empty_structures(item)
+            if reduced is None:
+                continue
+            if isinstance(reduced, (dict, list)) and not reduced:
+                continue
+            cleaned_items.append(reduced)
+        return cleaned_items or None
+    if isinstance(value, str):
+        return value if value.strip() else None
+    return value
+
+def validate_scan_date(scan_date: Any) -> bool:
+    if not isinstance(scan_date, str):
+        return False
+    try:
+        datetime.fromisoformat(scan_date.replace("Z", "+00:00"))
+        return True
+    except ValueError:
+        return False
+
+def render_xacta_payload(assets: List[Dict[str, Any]]) -> Dict[str, Any]:
+    if not isinstance(assets, list):
+        raise RuntimeError("Renderer expected a list of assets")
+
+    rendered_assets: List[Dict[str, Any]] = []
+    hostnames_seen = set()
+
+    for raw_asset in assets:
+        hostname = normalize_hostname(raw_asset.get("hostName"))
+        if not hostname:
+            raise RuntimeError("Asset hostName normalization failed")
+
+        scan_date = raw_asset.get("scanDate")
+        if not validate_scan_date(scan_date):
+            raise RuntimeError("Asset scanDate must be a valid ISO-8601 string")
+
+        sanitized_asset = {
+            key: raw_asset[key]
+            for key in ALLOWED_ASSET_FIELDS
+            if key in raw_asset
+        }
+        sanitized_asset["hostName"] = hostname
+        sanitized_asset["scanDate"] = scan_date
+
+        test_results = sanitized_asset.get("testResults")
+        if test_results is not None:
+            if not isinstance(test_results, list):
+                raise RuntimeError("testResults must be an array when provided")
+            if "dataSource" not in sanitized_asset or not str(sanitized_asset["dataSource"]).strip():
+                raise RuntimeError("dataSource is required when testResults exists")
+
+            sanitized_tests: List[Dict[str, Any]] = []
+            for result in test_results:
+                if not isinstance(result, dict):
+                    continue
+                cleaned_result = {
+                    key: result[key]
+                    for key in ALLOWED_TEST_RESULT_FIELDS
+                    if key in result
+                }
+                # Explicitly strip Burp evidence payloads by removing notes content.
+                cleaned_result.pop("notes", None)
+                cleaned_result = remove_empty_structures(cleaned_result) or {}
+                if cleaned_result:
+                    sanitized_tests.append(cleaned_result)
+            if sanitized_tests:
+                sanitized_asset["testResults"] = sanitized_tests
+            else:
+                sanitized_asset.pop("testResults", None)
+
+        sanitized_asset = remove_empty_structures(sanitized_asset)
+        if not sanitized_asset:
+            raise RuntimeError("Asset became empty after sanitization")
+
+        host_value = sanitized_asset.get("hostName")
+        if not host_value:
+            raise RuntimeError("Asset hostName is required")
+        if host_value in hostnames_seen:
+            raise RuntimeError(f"Duplicate hostName detected: {host_value}")
+        hostnames_seen.add(host_value)
+
+        if "scanDate" not in sanitized_asset or not validate_scan_date(sanitized_asset["scanDate"]):
+            raise RuntimeError("Asset scanDate validation failed")
+
+        rendered_assets.append(sanitized_asset)
+
+    if not rendered_assets:
+        raise RuntimeError("No valid assets to render")
+
+    return {"assets": rendered_assets}
 
 def extract_request_response(issue: ET.Element) -> Dict[str, Optional[str]]:
     request = None
@@ -422,7 +576,7 @@ def parse_burp_issues(
 # Xacta JSON validation
 # -----------------------------
 
-def validate_xacta_json(data: List[Dict]) -> None:
+def validate_xacta_json(data: Dict[str, Any]) -> None:
     if not JSONSCHEMA_AVAILABLE:
         logging.warning("jsonschema not installed; skipping Xacta JSON validation")
         return
@@ -480,6 +634,7 @@ def main() -> None:
 
         scan_date_value = root.attrib.get("exportTime")
         scan_date_epoch_ms = parse_export_time_to_epoch_ms(scan_date_value) or int(time.time() * 1000)
+        scan_date_iso8601 = parse_export_time_to_iso8601(scan_date_value)
         effective_scanner_version = scanner_version or root.attrib.get("burpVersion")
 
         test_results = parse_burp_issues(
@@ -490,26 +645,27 @@ def main() -> None:
             scan_date_value=scan_date_value
         )
 
-        asset = [{
+        asset_candidates = [{
             "hostName": app_name,
             "dataSource": DATA_SOURCE_NAME,
-            "scanDate": scan_date_epoch_ms,
+            "scanDate": scan_date_iso8601,
             "testResults": test_results
         }]
 
         if effective_scanner_version:
-            asset[0]["scannerVersion"] = effective_scanner_version
+            asset_candidates[0]["scannerVersion"] = effective_scanner_version
         if system_name:
-            asset[0]["systemName"] = system_name
+            asset_candidates[0]["systemName"] = system_name
 
         try:
-            validate_xacta_json(asset)
+            rendered_payload = render_xacta_payload(asset_candidates)
+            validate_xacta_json(rendered_payload)
         except Exception as e:
             logging.error("Validation failed for %s: %s", filename, e)
             continue
 
         with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(asset, f, indent=2)
+            json.dump(rendered_payload, f, indent=2)
 
         logging.info("Wrote %s", output_path)
 
