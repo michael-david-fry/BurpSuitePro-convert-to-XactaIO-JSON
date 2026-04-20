@@ -96,6 +96,10 @@ ALLOWED_TEST_RESULT_FIELDS = {
     "vendorId"
 }
 
+MAX_EVIDENCE_SNIPPET_CHARS = 100
+AUDIT_BLOCK_BEGIN = "[AUDIT_SOURCE_BURP_V1_BEGIN]"
+AUDIT_BLOCK_END = "[AUDIT_SOURCE_BURP_V1_END]"
+
 # -----------------------------
 # Helpers
 # -----------------------------
@@ -251,6 +255,59 @@ def remove_empty_structures(value: Any) -> Any:
         return value if value.strip() else None
     return value
 
+def truncate_text(value: Optional[str], limit: int = MAX_EVIDENCE_SNIPPET_CHARS) -> Optional[str]:
+    if value is None:
+        return None
+    normalized = value.strip()
+    if not normalized:
+        return None
+    if len(normalized) <= limit:
+        return normalized
+    return f"{normalized[:limit]}..."
+
+def sanitize_notes_text(notes_text: Optional[str]) -> Optional[str]:
+    if not notes_text:
+        return None
+
+    text = notes_text.strip()
+    if not text:
+        return None
+
+    audit_block = None
+    audit_start = text.find(AUDIT_BLOCK_BEGIN)
+    audit_end = text.find(AUDIT_BLOCK_END)
+    if audit_start != -1 and audit_end != -1 and audit_end >= audit_start:
+        audit_end_with_marker = audit_end + len(AUDIT_BLOCK_END)
+        audit_block = text[audit_start:audit_end_with_marker]
+        text = (text[:audit_start] + text[audit_end_with_marker:]).strip()
+
+    sanitized_lines: List[str] = []
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("Request Snippet:"):
+            snippet = truncate_text(line.split(":", 1)[1].strip())
+            if snippet:
+                sanitized_lines.append(f"Request Snippet: {snippet}")
+            continue
+        if line.startswith("Response Snippet:"):
+            snippet = truncate_text(line.split(":", 1)[1].strip())
+            if snippet:
+                sanitized_lines.append(f"Response Snippet: {snippet}")
+            continue
+        sanitized_lines.append(line)
+
+    rendered_parts: List[str] = []
+    if sanitized_lines:
+        rendered_parts.append("\n".join(sanitized_lines))
+    if audit_block:
+        rendered_parts.append(audit_block)
+
+    if not rendered_parts:
+        return None
+    return "\n\n".join(rendered_parts)
+
 def validate_scan_date(scan_date: Any) -> bool:
     if not isinstance(scan_date, str):
         return False
@@ -303,8 +360,8 @@ def render_xacta_payload(assets: List[Dict[str, Any]]) -> Dict[str, Any]:
                     for key in ALLOWED_TEST_RESULT_FIELDS
                     if key in result
                 }
-                # Explicitly strip Burp evidence payloads by removing notes content.
-                cleaned_result.pop("notes", None)
+                if "notes" in cleaned_result:
+                    cleaned_result["notes"] = sanitize_notes_text(cleaned_result.get("notes"))
                 cleaned_result = remove_empty_structures(cleaned_result) or {}
                 if cleaned_result:
                     sanitized_tests.append(cleaned_result)
@@ -354,6 +411,8 @@ def extract_request_response(issue: ET.Element) -> Dict[str, Optional[str]]:
     return {
         "request": request,
         "response": response,
+        "request_snippet": truncate_text(request),
+        "response_snippet": truncate_text(response),
         "http_method": http_method,
         "response_redirected": response_redirected
     }
@@ -419,8 +478,8 @@ def build_audit_source_record(
         "Recommended Remediation": remediation_detail or "",
         "References": references or "",
         "Weakness Classification": " | ".join(weakness_parts),
-        "Evidence Request": request_response_data["request"] or "",
-        "Evidence Response": request_response_data["response"] or "",
+        "Evidence Request": request_response_data["request_snippet"] or "",
+        "Evidence Response": request_response_data["response_snippet"] or "",
         "HTTP Method": request_response_data["http_method"] or "",
         "Scan Date": scan_date_value or "",
         "Scanner Source": scanner_source or "",
@@ -521,6 +580,10 @@ def parse_burp_issues(
             notes.append(f"Recommended Remediation: {remediation_detail}")
         if request_response_data["response_redirected"]:
             notes.append(f"Response Redirected: {request_response_data['response_redirected']}")
+        if request_response_data["request_snippet"]:
+            notes.append(f"Request Snippet: {request_response_data['request_snippet']}")
+        if request_response_data["response_snippet"]:
+            notes.append(f"Response Snippet: {request_response_data['response_snippet']}")
         if detail:
             notes.append(detail)
 
