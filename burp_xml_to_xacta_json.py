@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Tuple
 
 # Optional dependency
 try:
@@ -202,6 +202,30 @@ def normalize_hostname(value: Optional[str]) -> Optional[str]:
         return None
     return hostname.lower().strip(".")
 
+def select_primary_issue_host(issue_hosts: List[str]) -> Optional[str]:
+    """Select a deterministic primary hostname from parsed issue hosts."""
+    if not issue_hosts:
+        return None
+
+    host_counts: Dict[str, int] = {}
+    first_seen_idx: Dict[str, int] = {}
+
+    for idx, raw_host in enumerate(issue_hosts):
+        normalized = normalize_hostname(raw_host)
+        if not normalized:
+            continue
+        host_counts[normalized] = host_counts.get(normalized, 0) + 1
+        first_seen_idx.setdefault(normalized, idx)
+
+    if not host_counts:
+        return None
+
+    ranked_hosts = sorted(
+        host_counts.keys(),
+        key=lambda host: (-host_counts[host], first_seen_idx[host], host)
+    )
+    return ranked_hosts[0]
+
 def remove_empty_structures(value: Any) -> Any:
     if isinstance(value, dict):
         cleaned = {}
@@ -244,9 +268,10 @@ def render_xacta_payload(assets: List[Dict[str, Any]]) -> Dict[str, Any]:
     hostnames_seen = set()
 
     for raw_asset in assets:
-        hostname = normalize_hostname(raw_asset.get("hostName"))
+        raw_host_name = raw_asset.get("hostName")
+        hostname = normalize_hostname(raw_host_name)
         if not hostname:
-            raise RuntimeError("Asset hostName normalization failed")
+            raise RuntimeError("Asset hostName must be a valid hostname value")
 
         scan_date = raw_asset.get("scanDate")
         if not validate_scan_date(scan_date):
@@ -257,6 +282,8 @@ def render_xacta_payload(assets: List[Dict[str, Any]]) -> Dict[str, Any]:
             for key in ALLOWED_ASSET_FIELDS
             if key in raw_asset
         }
+        # Normalize only the true host field; preserve application labels in
+        # non-host identity fields (for example: systemName).
         sanitized_asset["hostName"] = hostname
         sanitized_asset["scanDate"] = scan_date
 
@@ -448,8 +475,9 @@ def parse_burp_issues(
     scanner_version: Optional[str],
     scan_date_epoch_ms: int,
     scan_date_value: Optional[str]
-) -> List[Dict]:
-    results = []
+) -> Tuple[List[Dict], List[str]]:
+    results: List[Dict[str, Any]] = []
+    issue_hosts: List[str] = []
 
     for issue in root.findall(".//issue"):
         name = text_or_none(issue.find("name"))
@@ -463,6 +491,8 @@ def parse_burp_issues(
         references = text_or_none(issue.find("references"))
         vulnerability_classifications = text_or_none(issue.find("vulnerabilityClassifications"))
         host = text_or_none(issue.find("host"))
+        if host and normalize_hostname(host):
+            issue_hosts.append(host)
         path = text_or_none(issue.find("path"))
         cwe_id = text_or_none(issue.find("cweid"))
         vendor_id = infer_vendor_id(issue, name, host, path)
@@ -570,7 +600,7 @@ def parse_burp_issues(
         else:
             logging.warning("Skipping issue with missing vendorId or testName")
 
-    return results
+    return results, issue_hosts
 
 # -----------------------------
 # Xacta JSON validation
@@ -637,7 +667,7 @@ def main() -> None:
         scan_date_iso8601 = parse_export_time_to_iso8601(scan_date_value)
         effective_scanner_version = scanner_version or root.attrib.get("burpVersion")
 
-        test_results = parse_burp_issues(
+        test_results, issue_hosts = parse_burp_issues(
             root=root,
             scanner_source=DATA_SOURCE_NAME,
             scanner_version=effective_scanner_version,
@@ -645,17 +675,24 @@ def main() -> None:
             scan_date_value=scan_date_value
         )
 
+        primary_issue_host = select_primary_issue_host(issue_hosts)
+        fallback_hostname = "application.local"
+        host_for_asset = primary_issue_host or fallback_hostname
+        system_name_value = (system_name or "").strip() or app_name
+        if not primary_issue_host:
+            # Preserve the original application label when a real host is unavailable.
+            system_name_value = app_name
+
         asset_candidates = [{
-            "hostName": app_name,
+            "hostName": host_for_asset,
             "dataSource": DATA_SOURCE_NAME,
             "scanDate": scan_date_iso8601,
-            "testResults": test_results
+            "testResults": test_results,
+            "systemName": system_name_value
         }]
 
         if effective_scanner_version:
             asset_candidates[0]["scannerVersion"] = effective_scanner_version
-        if system_name:
-            asset_candidates[0]["systemName"] = system_name
 
         try:
             rendered_payload = render_xacta_payload(asset_candidates)
