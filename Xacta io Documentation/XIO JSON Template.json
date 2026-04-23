@@ -1,0 +1,190 @@
+[
+  {
+    "dataSource": "Tanium",
+    "hostName": "Asset_R2D2",
+    "assetRole": "Existing Asset Role",
+    "ramSize": 16021788,
+    "scanDate": "2025-02-28",
+    "scannerVersion": "4.2",
+    "systemName": "XIO System Name",
+    "cpus": [
+      {
+        "model": "AMD Ryzen 5",
+        "clock": "3500Mhz"
+      },
+      {
+        "model": "Intel i7",
+        "clock": "3500Mhz"
+      }
+    ],
+    "biosManufacturer": "Millennium",
+    "biosVersion": "4.2",
+    "biosDate": "04/02/2004",
+    "osList": [
+      {
+        "name": "Robotic Core Flux",
+        "family": "CoreFlux"
+      }
+    ],
+    "driveList": [
+      {
+        "model": "Stardrive",
+        "sizeInMB": "42000"
+      }
+    ],
+    "vendorInfo": "Gal Inc",
+    "systemModel": "Gal-Z42",
+    "serial": "Z42",
+    "poc": {
+      "name": "Zell Andrew",
+      "organization": "Bell Space",
+      "email": "zell.andrew@bellspace.com",
+      "phone": "8008675309",
+      "title": "Sr Design Engineer",
+      "location": "Texas"
+    },
+    "endpointData": {
+      "virusScanProductVersion": "4.0.2.0",
+      "virusScanEngineVersion": "0.4.0.2",
+      "virusScanPatchNum": "42",
+      "antiSpywareVersion": "4.2",
+      "datVersion": "4",
+      "hipVersion": "2",
+      "hipStatus": "Enabled",
+      "firewallStatus": "Enabled",
+      "lastScan": "04/02/2024",
+      "lastDefinitionDate": "02/04/2024"
+    },
+    "cloudInfo": {
+      "cloudresourceId": "arn:aws:ec2:us-east-1:123456789012:instance/i-09fa6e42fe4656b63",
+      "cloudType": "AWS",
+      "cloudAccountId": "123456789012",
+      "resourceName": "ip-10-11-12-13.ec2.internal",
+      "region": "us-east-1",
+      "resourceType": "ec2-instance",
+      "resourceData": {
+        "amiId": "ami-12345",
+        "amiLaunchIndex": "0",
+        "instanceId": "12345",
+        "instanceType": "mid",
+        "hostnameLocal": "hostnamelocal",
+        "hostnamePublic": "hostnamePUblic",
+        "ipLocal": "1.1.1.1",
+        "ipPublic": "8.8.8.8",
+        "placement": "string",
+        "reservationId": "3",
+        "securityGroups": "EC2-SecurityGroup",
+        "deviceMappings": {
+          "Device": "Mapping"
+        }
+      }
+    },
+    "testResults": [
+      {
+        "vendorId": "35706",
+        "testName": "Check custom key-value pairs for vulnerability test results",
+        "notes": "n/a",
+        "solution": "The solution to the problem is always 42.",
+        "description": "To describe the vulnerability is to admit one exists.",
+        "result": "fail",
+        "rawResult": "Info",
+        "contents": [
+          {
+            "name": "CVE-2024-3661",
+            "type": "CVE"
+          },
+          {
+            "name": "CCI-000003",
+            "type": "CCI"
+          }
+        ],
+        "port": 42,
+        "protocol": "tcp",
+        "runTime": 1348965793000,
+        "firstSeen": "04/02/2004",
+        "scannedWithCredentialsFlag": true,
+        "errorRunningTestFlag": false,
+        "riskFactor": "Medium",
+        "severity": "Low",
+        "catValue": "CAT II",
+		"cvssScore": 4.2,
+        "cvssVersion": 3,
+        "isTestNameTestIdentifier": true,
+        "resultData": {
+          "customA": "Custom key-pair value for first field.",
+          "customB": "Custom key-pair value for second field."
+        }
+      },
+      {
+        "vendorId": "94732",
+        "testName": "Check to ensure all JSON fields are properly mapped",
+        "notes": "These are notes which descript the use of this field. It can be used for provide notes on any aspects of this vulnerability or use simply to create additional context.",
+        "solution": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna.",
+        "description": "Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue.",
+        "result": "fail",
+        "rawResult": "Info",
+        "contents": [
+          {
+            "name": "CVE-2024-3661",
+            "type": "CVE"
+          },
+          {
+            "name": "CCI-000003",
+            "type": "CCI"
+          }
+        ],
+        "port": 42,
+        "protocol": "tcp",
+        "runTime": 1348965793000,
+        "firstSeen": "04/02/2004",
+        "scannedWithCredentialsFlag": true,
+        "errorRunningTestFlag": false,
+        "riskFactor": "None",
+        "severity": "Low",
+        "catValue": "CAT II",
+        "cvssScore": 4.2,
+        "cvssVersion": 3,
+        "isTestNameTestIdentifier": true,
+        "resultData": {
+          "Custom Title A": "Custom key-pair value for first field.",
+          "Custom Title B": "Custom key-pair value for second field.",
+		  "Custom Title C": "Enter any information related to this custom field. This doesn't include line breaks but can have as many custom key-value pairs needed to create as many custom headers and fields as necessary."
+        }
+      }
+    ],
+    "softwares": [
+      {
+        "name": "Internet Explorer",
+        "version": "11",
+        "vendor": "Microsoft",
+        "cpe": "cpe:2.3:a:microsoft:internet_explorer:11:-:*:*:*:*:*:*"
+      },
+      {
+        "name": "Dolby Audio X2 (DAX2)",
+        "version": "1.3",
+        "vendor": "Dolby",
+        "cpe": "cpe:/a:dolby:dolby_audio_x2:1.3"
+      }
+    ],
+    "netAdapters": [
+      {
+        "ipAddress": "250.13.208.239",
+        "macAddress": "0a:69:ac:94:fa:4c",
+        "dnsAddress": "ip-250.13.208.239.internal"
+      },
+      {
+        "ipAddress": "84.80.74.89",
+        "macAddress": "0a:69:ac:d0:c5:a4",
+        "dnsAddress": "ip-84.80.74.89.internal"
+      },
+      {
+        "ipAddress": "34.42.103.14",
+        "macAddress": "0a:69:ac:a4:62:f8"
+      },
+      {
+        "ipAddress": "188.41.109.21",
+        "macAddress": "0a:69:ac:66:ba:9c"
+      }
+    ]
+  }
+]
