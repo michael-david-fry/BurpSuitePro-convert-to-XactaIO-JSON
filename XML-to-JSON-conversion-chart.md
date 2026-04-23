@@ -1,88 +1,102 @@
 # XML to JSON Conversion Chart (Burp Suite XML ➜ Xacta JSON)
 
-This chart documents the **current rendered output schema** produced by `burp_xml_to_xacta_json.py` after sanitization in `render_xacta_payload()`.
+This chart documents the **current v3 output schema** produced by `burp_xml_to_xacta_json_v3.py`.
 
-## Current rendered output shape
+## Current rendered output shape (v3)
 
 ```json
-{
-  "assets": [
-    {
-      "hostName": "<normalized-lowercase-hostname>",
-      "scanDate": "<ISO-8601>",
-      "dataSource": "Burp Suite Professional",
-      "systemName": "<optional>",
-      "scannerVersion": "<optional>",
-      "testResults": [
-        {
-          "vendorId": "<string>",
-          "testName": "<string>",
-          "description": "<string>",
-          "result": "Pass|N/A|Fail",
-          "rawResult": "Pass|N/A|Fail",
-          "protocol": "HTTP|HTTPS|..."
-        }
-      ]
-    }
-  ]
-}
+[
+  {
+    "dataSource": "Burp Suite Professional",
+    "hostName": "<normalized-lowercase-hostname>",
+    "scanDate": "<ISO-8601>",
+    "systemName": "<optional>",
+    "scannerVersion": "<optional>",
+    "testResults": [
+      {
+        "vendorId": "<string>",
+        "testName": "<string>",
+        "notes": "<string>",
+        "solution": "<optional-string>",
+        "description": "<string>",
+        "result": "Pass|N/A|Fail",
+        "rawResult": "Pass|N/A|Fail",
+        "contents": [
+          { "name": "CWE-79", "type": "CWE" }
+        ],
+        "port": 443,
+        "protocol": "HTTP|HTTPS|...",
+        "runTime": 1719446400000,
+        "scannedWithCredentialsFlag": false,
+        "errorRunningTestFlag": false,
+        "riskFactor": "Low|Moderate|High",
+        "severity": "Information|Low|Medium|High",
+        "resultData": {
+          "Source Type": "<string>",
+          "External ID": "<string>",
+          "Severity": "<string>",
+          "Confidence": "<string>",
+          "HTTP Method": "<string>",
+          "Scan Date": "<string>",
+          "Scanner Source": "Burp Suite Professional",
+          "Scanner Version": "<optional-string>"
+        },
+        "testData": "<string>"
+      }
+    ],
+    "netAdapters": [
+      { "ipAddress": "192.0.2.10" }
+    ]
+  }
+]
 ```
 
-## XML ➜ Rendered JSON mapping (exact)
+## XML ➜ Rendered JSON mapping (exact v3)
 
 | Burp XML source | Rendered Xacta JSON target | Transformation / logic |
 |---|---|---|
 | Root `<issues>` | Validation gate | Root tag **must** be `issues`, and at least one `<issue>` must exist. |
-| `<issue><name>` | `assets[].testResults[].testName` | Trimmed text. Required in parser for result inclusion. |
-| `<issue><type>` (preferred), else `<serialNumber>`, else `name|host|path` | `assets[].testResults[].vendorId` | First available source in that priority order. Required with `testName` for inclusion. |
-| `<issue><severity>` | `assets[].testResults[].result` | If value is `pass` or `n/a` (case-insensitive): title-cased (`Pass` / `N/A`), otherwise `Fail`. |
-| `<issue><severity>` | `assets[].testResults[].rawResult` | Same logic as `result`. |
-| `<issue><issueBackground>`, `<issue><issueDetail>`, `<issue><remediationBackground>`, `<issue><remediationDetail>` | `assets[].testResults[].description` | Concatenated with blank lines; remediation lines are prefixed with labels. |
-| `<issue><host>` (URL scheme) | `assets[].testResults[].protocol` | Parsed scheme uppercased (e.g., `http`→`HTTP`). Omitted if unavailable. |
-| Config: `APPLICATION_NAME` | `assets[].hostName` | Used as hostName seed, then normalized to lowercase hostname in renderer. |
-| `<issues exportTime="...">` | `assets[].scanDate` | Parsed to ISO-8601 string. Must be valid ISO-8601 after render validation. |
-| Constant | `assets[].dataSource` | Always `Burp Suite Professional`. |
-| Config: `SYSTEM_NAME` | `assets[].systemName` | Included when configured. |
-| Config: `SCANNER_VERSION` else `<issues burpVersion="...">` | `assets[].scannerVersion` | Included when available. |
+| `<issue><host>` | `asset.hostName` grouping key | Host is normalized with URL parsing (`scheme/port/path removed`), lowercased, trailing `.` stripped. If missing/unparseable, grouped as `unknown.local`. |
+| `<issue><name>` | `testResults[].testName` | Trimmed text. Required (with `vendorId`) for inclusion. |
+| `<issue><type>` (preferred), else `<serialNumber>`, else `name|host|path` | `testResults[].vendorId` | First available source in that priority order. |
+| `<issue><severity>` | `testResults[].result` + `rawResult` | If severity is `pass` or `n/a` (case-insensitive), output title-case; otherwise `Fail`. |
+| `<issue><severity>` | `testResults[].riskFactor` | Mapped: `High→High`, `Medium→Moderate`, `Low→Low`, `Information→Low`; unknown defaults to `Low`. |
+| `<issue><severity>` | `testResults[].severity` | Original Burp severity text (fallback `Information`). |
+| `<issue><issueBackground>` + `<issue><issueDetail>` | `testResults[].description` | Combined with blank line separator when both exist. |
+| `<issue><remediationBackground>` + `<issue><remediationDetail>` | `testResults[].solution` | Combined with blank line separator when present. |
+| `<issue><host>` (URL scheme) | `testResults[].protocol` | Parsed scheme uppercased (`http`→`HTTP`). |
+| `<issue><host>` + `<issue><path>` | `testResults[].port` | Port parsed from host/path URL if present. |
+| `<issue><cweid>` and `<issue><vulnerabilityClassifications>` | `testResults[].contents[]` | Added as CWE-tagged content entries. |
+| `<issue><host ip="...">` (preferred), else IP parsed from `<host>` | `asset.netAdapters[].ipAddress` | Unique per host group, sorted in output. |
+| `<issue>` request/response metadata + finding text fields | `testResults[].notes` | Human-readable notes plus appended `[AUDIT_SOURCE_BURP_V1_*]` JSON block; snippets truncated/sanitized. |
+| `<issue>` + scanner metadata | `testResults[].resultData` | Includes source identifiers and scan metadata key/value pairs. |
+| `<issues exportTime="...">` | `asset.scanDate` + `testResults[].runTime` | ISO-8601 for `scanDate`; epoch-ms for `runTime` (fallback current time if parse fails). |
+| Constant | `asset.dataSource` | Always `Burp Suite Professional`. |
+| Config `SYSTEM_NAME` else `APPLICATION_NAME` | `asset.systemName` | Uses configured system name; falls back to application name. |
+| Config `SCANNER_VERSION` else `<issues burpVersion="...">` | `asset.scannerVersion` | Included when available. |
 
-## Important rendered-schema constraints
+## Host grouping and test result aggregation
 
-Only the following **asset** fields survive rendering:
+- The converter creates **one asset per normalized hostName**.
+- All issues mapped to that host are appended into that asset's `testResults` array.
+- Duplicate asset host names are rejected at render time.
 
-- `hostName`
-- `scanDate`
-- `dataSource`
-- `systemName`
-- `scannerVersion`
-- `netAdapters`
-- `softwares`
-- `testResults`
+Implication:
+- You get **multiple entries across different hosts**, and **multiple test results within each host entry**.
 
-Only the following **testResults** fields survive rendering:
+## Rendered-field ordering (v3)
 
-- `testName`
-- `description`
-- `notes` *(explicitly removed right before output)*
-- `result`
-- `rawResult`
-- `protocol`
-- `vendorId`
+Assets are emitted in this order when present:
 
-### Fields computed earlier but not present in final rendered output
+- `dataSource`, `hostName`, `assetRole`, `ramSize`, `scanDate`, `scannerVersion`, `systemName`, `cpus`, `biosManufacturer`, `biosVersion`, `biosDate`, `osList`, `driveList`, `vendorInfo`, `systemModel`, `serial`, `poc`, `endpointData`, `cloudInfo`, `testResults`, `softwares`, `netAdapters`
 
-The parser computes additional fields, but they are dropped by render allowlists and note stripping:
+Test results are emitted in this order when present:
 
-- `riskFactor`, `scanRiskFactor`
-- `runTime`
-- `scannedWithCredentialsFlag`, `errorRunningTestFlag`
-- `resultData`
-- `testData`
-- `port`
-- `contents`
-- `notes` (removed intentionally)
+- `vendorId`, `testName`, `notes`, `solution`, `description`, `result`, `rawResult`, `contents`, `port`, `protocol`, `runTime`, `firstSeen`, `scannedWithCredentialsFlag`, `errorRunningTestFlag`, `riskFactor`, `severity`, `catValue`, `cvssScore`, `cvssVersion`, `isTestNameTestIdentifier`, `resultData`, `testData`
 
-## Practical implications
+## Import-relevant notes
 
-- The final payload is intentionally compact and strict.
-- Evidence-heavy metadata (including audit blocks and raw request/response in `notes`) is **not** present in the rendered JSON file.
-- If downstream consumers require dropped fields, update `ALLOWED_TEST_RESULT_FIELDS` and renderer behavior.
+- Top-level output is a **JSON array** (`[ ... ]`), not `{ "assets": [...] }`.
+- `hostName` must be unique per asset after normalization.
+- `scanDate` must remain valid ISO-8601 or rendering fails validation.
+- If host parsing fails, findings collapse into `unknown.local`, which can merge otherwise unrelated findings.
