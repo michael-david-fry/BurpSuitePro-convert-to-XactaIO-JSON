@@ -1,4 +1,4 @@
-content = '''# Audit-Supporting XML→JSON Conversion Logic Report
+# Audit-Supporting XML→JSON Conversion Logic Report
 
 **Document Version:** 1.0  
 **Assessment Perspective:** FedRAMP / 3PAO Evidence Review  
